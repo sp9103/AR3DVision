@@ -1,4 +1,5 @@
-OpenCVTest/opencv2.framework/*
+ChessboardTest2/opencv2.framework/*
+ChessboardTest2/Frameworks/opencv2.framework/*
 
 # Xcode
 .DS_Store
