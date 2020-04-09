@@ -119,6 +119,8 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
         DispatchQueue.main.sync {
             var dstImg : UIImage = uiImage
             
+            dstImg = OpenCVWrapper.makeGrayImage(uiImage)
+            
             self.imageView.image = dstImg
         }
     }
