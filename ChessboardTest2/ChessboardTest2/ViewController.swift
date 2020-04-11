@@ -23,8 +23,12 @@ class ViewController: UIViewController {
     let session = AVCaptureSession()
     
     let saveButton: UIButton = UIButton()
+    let modeButton: UIButton = UIButton()
     
     private let context = CIContext()
+    
+    let totalModeCnt: Int = 3
+    var mode: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,11 +56,21 @@ class ViewController: UIViewController {
         saveButton.layer.position = CGPoint(x: self.view.frame.width/2, y: gap + 640)
         saveButton.addTarget(self, action: #selector(self.onClickSaveButton(sender:)), for: .touchUpInside)
         
+        modeButton.frame = CGRect(x: 0, y: 0, width: 80, height: 40)
+        modeButton.backgroundColor = UIColor.orange
+        modeButton.layer.masksToBounds = true
+        modeButton.setTitle("Mode", for: .normal)
+        modeButton.setTitleColor(UIColor.white, for: .normal)
+        modeButton.layer.cornerRadius = 20.0
+        modeButton.layer.position = CGPoint(x: (saveButton.layer.position.x + UIScreen.main.bounds.width)/2 + 30, y: gap + 640)
+        modeButton.addTarget(self, action: #selector(self.onClickModeButton(sender:)), for: .touchUpInside)
+        
         //Add a view on top of the cameras' view
         boxView = UIView(frame: self.view.frame)
         
         view.addSubview(boxView)
         view.addSubview(saveButton)
+        view.addSubview(modeButton)
         
         self.setupAVCapture()
     }
@@ -80,6 +94,10 @@ class ViewController: UIViewController {
         messageBox(messageTitle: "Success", messageAlert: "Save new image successfully", messageBoxStyle: .alert, alertActionStyle: .cancel) {
             self.dismiss(animated: true, completion: nil)
         }
+    }
+    
+    @objc func onClickModeButton(sender: UIButton){
+        mode = (mode + 1) % totalModeCnt
     }
         
     func messageBox(messageTitle: String, messageAlert: String, messageBoxStyle: UIAlertController.Style, alertActionStyle: UIAlertAction.Style, completionHandler: @escaping () -> Void)
@@ -159,9 +177,14 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
             var dstImg : UIImage = uiImage
             self.originImg = uiImage
             
-//            dstImg = OpenCVWrapper.makeGrayImage(uiImage)
-//            dstImg = OpenCVWrapper.makeChessboardImage(uiImage)
-            dstImg = OpenCVWrapper.makeMarkerImage(uiImage)
+            switch self.mode{
+            case 1:
+                dstImg = OpenCVWrapper.makeChessboardImage(uiImage)
+            case 2:
+                dstImg = OpenCVWrapper.makeMarkerImage(uiImage)
+            default:
+                self.mode = 0
+            }
             
             self.imageView.image = dstImg
         }

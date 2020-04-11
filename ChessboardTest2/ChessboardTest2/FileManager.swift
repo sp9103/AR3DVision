@@ -20,7 +20,6 @@ func store(image: UIImage,
         switch storageType {
         case .fileSystem:
             if let filePath = filePath(forKey: key+".png") {
-                print(filePath)
                 do {
                     try pngRepresentation.write(to: filePath,
                                                 options: .atomic)
@@ -39,11 +38,17 @@ func retrieveImage(forKey key: String,
                            inStorageType storageType: StorageType) -> UIImage? {
     switch storageType {
     case .fileSystem:
+//        if let filePath = filePath(forKey: key+".png"),
+//            let fileData = FileManager.default.contents(atPath: filePath.path),
+//            let image = UIImage(data: fileData) {
+//            return image
+//        }
         if let filePath = filePath(forKey: key+".png"),
             let fileData = FileManager.default.contents(atPath: filePath.path),
             let image = UIImage(data: fileData) {
             return image
         }
+        
     case .userDefaults:
         if let imageData = UserDefaults.standard.object(forKey: key) as? Data,
             let image = UIImage(data: imageData) {
@@ -64,10 +69,15 @@ func filePath(forKey key: String) -> URL? {
     return documentURL.appendingPathComponent(key)
 }
 
+func getDocumentsDirectory() -> URL {
+    let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+    return paths[0]
+}
+
 func save(image targetImage: UIImage, forKey key: String) {
     DispatchQueue.global(qos: .background).async {
         store(image: targetImage,
                    forKey: key,
-                   withStorageType: .userDefaults)
+                   withStorageType: .fileSystem)
     }
 }

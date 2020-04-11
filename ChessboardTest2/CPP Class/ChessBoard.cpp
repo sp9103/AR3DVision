@@ -16,7 +16,7 @@ void ChessBoard::drawChessboard(cv::Mat& img){
         cvtColor(img, gray, cv::COLOR_BGR2GRAY);
     }
     
-    Size patternsize(3,3); //interior number of corners
+    Size patternsize(9,6); //interior number of corners
     vector<Point2f> corners; //this will be filled by the detected corners
     
     bool patternfound = findChessboardCorners(gray, patternsize, corners, CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE
