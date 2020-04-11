@@ -13,8 +13,10 @@
 		CE3D7FCC243F6628008EA735 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE3D7FCA243F6628008EA735 /* Main.storyboard */; };
 		CE3D7FCE243F6629008EA735 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE3D7FCD243F6629008EA735 /* Assets.xcassets */; };
 		CE3D7FD1243F6629008EA735 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE3D7FCF243F6629008EA735 /* LaunchScreen.storyboard */; };
-		CE3D7FDB243F6A0E008EA735 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3D7FDA243F6A0E008EA735 /* opencv2.framework */; };
 		CE3D7FDF243F6B64008EA735 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE3D7FDE243F6B63008EA735 /* OpenCVWrapper.mm */; };
+		CE3D7FE4243F749A008EA735 /* ChessBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE3D7FE2243F749A008EA735 /* ChessBoard.cpp */; };
+		CE546C7A2441A0810068B636 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE546C792441A0810068B636 /* opencv2.framework */; };
+		CE546C7C2441A66A0068B636 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE546C7B2441A66A0068B636 /* FileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,10 +28,13 @@
 		CE3D7FCD243F6629008EA735 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE3D7FD0243F6629008EA735 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CE3D7FD2243F6629008EA735 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CE3D7FDA243F6A0E008EA735 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		CE3D7FDC243F6B63008EA735 /* ChessboardTest2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ChessboardTest2-Bridging-Header.h"; sourceTree = "<group>"; };
 		CE3D7FDD243F6B63008EA735 /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
 		CE3D7FDE243F6B63008EA735 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
+		CE3D7FE1243F7452008EA735 /* ChessBoard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChessBoard.h; sourceTree = "<group>"; };
+		CE3D7FE2243F749A008EA735 /* ChessBoard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChessBoard.cpp; sourceTree = "<group>"; };
+		CE546C792441A0810068B636 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		CE546C7B2441A66A0068B636 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE3D7FDB243F6A0E008EA735 /* opencv2.framework in Frameworks */,
+				CE546C7A2441A0810068B636 /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,6 +52,7 @@
 		CE3D7FB8243F6628008EA735 = {
 			isa = PBXGroup;
 			children = (
+				CE3D7FE0243F7414008EA735 /* CPP Class */,
 				CE3D7FD8243F67B6008EA735 /* OpenCVWrapper */,
 				CE3D7FC3243F6628008EA735 /* ChessboardTest2 */,
 				CE3D7FC2243F6628008EA735 /* Products */,
@@ -72,6 +78,7 @@
 				CE3D7FCD243F6629008EA735 /* Assets.xcassets */,
 				CE3D7FCF243F6629008EA735 /* LaunchScreen.storyboard */,
 				CE3D7FD2243F6629008EA735 /* Info.plist */,
+				CE546C7B2441A66A0068B636 /* FileManager.swift */,
 			);
 			path = ChessboardTest2;
 			sourceTree = "<group>";
@@ -89,9 +96,18 @@
 		CE3D7FD9243F69C1008EA735 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CE3D7FDA243F6A0E008EA735 /* opencv2.framework */,
+				CE546C792441A0810068B636 /* opencv2.framework */,
 			);
 			path = Frameworks;
+			sourceTree = "<group>";
+		};
+		CE3D7FE0243F7414008EA735 /* CPP Class */ = {
+			isa = PBXGroup;
+			children = (
+				CE3D7FE1243F7452008EA735 /* ChessBoard.h */,
+				CE3D7FE2243F749A008EA735 /* ChessBoard.cpp */,
+			);
+			path = "CPP Class";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,7 +185,9 @@
 				CE3D7FC9243F6628008EA735 /* ViewController.swift in Sources */,
 				CE3D7FC5243F6628008EA735 /* AppDelegate.swift in Sources */,
 				CE3D7FDF243F6B64008EA735 /* OpenCVWrapper.mm in Sources */,
+				CE546C7C2441A66A0068B636 /* FileManager.swift in Sources */,
 				CE3D7FC7243F6628008EA735 /* SceneDelegate.swift in Sources */,
+				CE3D7FE4243F749A008EA735 /* ChessBoard.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

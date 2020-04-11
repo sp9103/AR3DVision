@@ -10,6 +10,7 @@
 #import <opencv2/imgcodecs/ios.h>
 
 #import "OpenCVWrapper.h"
+#import "ChessBoard.h"
 
 @implementation OpenCVWrapper
 
@@ -29,6 +30,30 @@
     
     // Transform grayMat to UIImage and return
     return MatToUIImage(grayMat);
+}
+
++(UIImage *) makeChessboardImage:(UIImage *) image {
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    ChessBoard cb;
+    cv::Mat dst = imageMat.clone();
+    cb.drawChessboard(dst);
+    
+    return MatToUIImage(dst);
+}
+
++(UIImage *) makeMarkerImage:(UIImage *) image{
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    ChessBoard cb;
+    cv::Mat dst = imageMat.clone();
+    cb.drawMarker(dst);
+    
+    return MatToUIImage(dst);
 }
 
 @end

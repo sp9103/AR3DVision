@@ -12,6 +12,7 @@ import AVFoundation
 class ViewController: UIViewController {
     var previewView : UIView!
     let imageView: UIImageView = UIImageView()
+    var originImg: UIImage!
     var boxView:UIView!
     
     //Camera Capture requiered properties
@@ -21,10 +22,14 @@ class ViewController: UIViewController {
     var captureDevice : AVCaptureDevice!
     let session = AVCaptureSession()
     
+    let saveButton: UIButton = UIButton()
+    
     private let context = CIContext()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let gap : CGFloat = (UIScreen.main.bounds.size.height - 640) / 2
         
         previewView = UIView(frame: CGRect(x: 0,
                                            y: 0,
@@ -38,10 +43,21 @@ class ViewController: UIViewController {
         imageView.layer.position = CGPoint(x: self.view.frame.width/2, y: self.view.frame.height/2)
         previewView.addSubview(imageView)
         
+        saveButton.frame = CGRect(x: 0, y: 0, width: 80, height: 40)
+        saveButton.backgroundColor = UIColor.red
+        saveButton.layer.masksToBounds = true
+        saveButton.setTitle("Save", for: .normal)
+        saveButton.setTitleColor(UIColor.white, for: .normal)
+        saveButton.layer.cornerRadius = 20.0
+        saveButton.layer.position = CGPoint(x: self.view.frame.width/2, y: gap + 640)
+        saveButton.addTarget(self, action: #selector(self.onClickSaveButton(sender:)), for: .touchUpInside)
+        
         //Add a view on top of the cameras' view
         boxView = UIView(frame: self.view.frame)
         
         view.addSubview(boxView)
+        view.addSubview(saveButton)
+        
         self.setupAVCapture()
     }
     
@@ -55,6 +71,29 @@ class ViewController: UIViewController {
                return true
            }
        }
+    
+    @objc func onClickSaveButton(sender: UIButton){
+        let uuid = UUID().uuidString
+        
+        save(image: originImg, forKey: uuid)
+        
+        messageBox(messageTitle: "Success", messageAlert: "Save new image successfully", messageBoxStyle: .alert, alertActionStyle: .cancel) {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+        
+    func messageBox(messageTitle: String, messageAlert: String, messageBoxStyle: UIAlertController.Style, alertActionStyle: UIAlertAction.Style, completionHandler: @escaping () -> Void)
+    {
+        let alert = UIAlertController(title: messageTitle, message: messageAlert, preferredStyle: messageBoxStyle)
+
+        let okAction = UIAlertAction(title: "Ok", style: alertActionStyle) { _ in
+            completionHandler() // This will only get called after okay is tapped in the alert
+        }
+
+        alert.addAction(okAction)
+
+        present(alert, animated: true, completion: nil)
+    }
 }
 
 // AVCaptureVideoDataOutputSampleBufferDelegate protocol and related methods
@@ -118,8 +157,11 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
         
         DispatchQueue.main.sync {
             var dstImg : UIImage = uiImage
+            self.originImg = uiImage
             
-            dstImg = OpenCVWrapper.makeGrayImage(uiImage)
+//            dstImg = OpenCVWrapper.makeGrayImage(uiImage)
+//            dstImg = OpenCVWrapper.makeChessboardImage(uiImage)
+            dstImg = OpenCVWrapper.makeMarkerImage(uiImage)
             
             self.imageView.image = dstImg
         }
