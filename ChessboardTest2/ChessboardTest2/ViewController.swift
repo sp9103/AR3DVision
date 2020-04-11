@@ -33,6 +33,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path)
+        
         let gap : CGFloat = (UIScreen.main.bounds.size.height - 640) / 2
         
         previewView = UIView(frame: CGRect(x: 0,

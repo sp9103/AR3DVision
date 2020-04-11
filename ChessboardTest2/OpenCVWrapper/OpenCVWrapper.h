@@ -12,9 +12,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface OpenCVWrapper : NSObject
+
 +(UIImage *) makeGrayImage:(UIImage *) image;
 +(UIImage *) makeChessboardImage:(UIImage *) image;
 +(UIImage *) makeMarkerImage:(UIImage *) image;
++(void) initDescManager:(NSString*) path;
 
 @end
 

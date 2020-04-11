@@ -37,9 +37,8 @@
     
     UIImageToMat(image, imageMat);
     
-    ChessBoard cb;
     cv::Mat dst = imageMat.clone();
-    cb.drawChessboard(dst);
+    ChessBoard::instance().drawChessboard(dst);
     
     return MatToUIImage(dst);
 }
@@ -49,11 +48,16 @@
     
     UIImageToMat(image, imageMat);
     
-    ChessBoard cb;
     cv::Mat dst = imageMat.clone();
-    cb.drawMarker(dst);
+    ChessBoard::instance().drawMarker(dst);
     
     return MatToUIImage(dst);
+}
+
++(void) initDescManager:(NSString*) path{
+    std::string cppString = [path UTF8String];
+    
+    ChessBoard::instance().setPath(cppString);
 }
 
 @end

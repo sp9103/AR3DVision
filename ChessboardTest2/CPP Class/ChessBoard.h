@@ -21,14 +21,21 @@ using namespace cv;
 class ChessBoard
 {
 public:
-    ChessBoard() {}
-    
     void drawChessboard(cv::Mat& img);
     void drawMarker(cv::Mat& img);
     
+    static ChessBoard& instance();
+    void setPath(string path);
+    
 private:
+    string filepath;
     cv::Mat cameraMatrix;
     cv::Mat distCoef;
+    
+    ChessBoard() {}
+    static ChessBoard* instance_;
+    
+    cv::Mat xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z);
 };
 
 #endif /* ChessBoard_h */
