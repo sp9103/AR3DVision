@@ -26,9 +26,11 @@ public:
     
     static ChessBoard& instance();
     void setPath(string path);
+    void setDataPath(string path);
     
 private:
     string filepath;
+    string datasetPath;
     cv::Mat cameraMatrix;
     cv::Mat distCoef;
     

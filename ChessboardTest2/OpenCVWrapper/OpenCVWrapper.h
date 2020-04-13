@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage *) makeGrayImage:(UIImage *) image;
 +(UIImage *) makeChessboardImage:(UIImage *) image;
 +(UIImage *) makeMarkerImage:(UIImage *) image;
-+(void) initDescManager:(NSString*) path;
++(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath;
 
 @end
 

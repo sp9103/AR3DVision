@@ -119,6 +119,10 @@ void ChessBoard::setPath(string path){
     fsFrontRead.release();
 }
 
+void ChessBoard::setDataPath(string path){
+    datasetPath = path;
+}
+
 
 cv::Mat ChessBoard::xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z){
     cv::Mat R = cv::Mat::zeros(3,3,CV_64FC1);

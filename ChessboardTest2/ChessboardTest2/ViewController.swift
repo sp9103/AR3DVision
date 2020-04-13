@@ -24,8 +24,11 @@ class ViewController: UIViewController {
     
     let saveButton: UIButton = UIButton()
     let modeButton: UIButton = UIButton()
+    let recordSwitch: UISwitch = UISwitch()
     
     private let context = CIContext()
+    private var startTime: CFTimeInterval!
+    private let saveCount: UILabel = UILabel()
     
     let totalModeCnt: Int = 3
     var mode: Int = 0
@@ -33,9 +36,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path)
+        OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path, dataPath: filePath(forKey: "dataset.txt")!.absoluteURL.path)
         
         let gap : CGFloat = (UIScreen.main.bounds.size.height - 640) / 2
+        
+        startTime = CACurrentMediaTime()
         
         previewView = UIView(frame: CGRect(x: 0,
                                            y: 0,
@@ -67,12 +72,24 @@ class ViewController: UIViewController {
         modeButton.layer.position = CGPoint(x: (saveButton.layer.position.x + UIScreen.main.bounds.width)/2 + 30, y: gap + 640)
         modeButton.addTarget(self, action: #selector(self.onClickModeButton(sender:)), for: .touchUpInside)
         
+        recordSwitch.layer.position = CGPoint(x: (UIScreen.main.bounds.width - saveButton.layer.position.x)/2 - 30, y: gap + 640)
+        
+        saveCount.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+        saveCount.backgroundColor = UIColor.clear
+        saveCount.textAlignment = .center
+        saveCount.text = "0"
+        saveCount.textColor = UIColor.green
+        saveCount.layer.position = CGPoint(x: self.view.frame.width/7*6, y: gap)
+        saveCount.isHidden = true
+        
         //Add a view on top of the cameras' view
         boxView = UIView(frame: self.view.frame)
         
         view.addSubview(boxView)
         view.addSubview(saveButton)
         view.addSubview(modeButton)
+        view.addSubview(recordSwitch)
+        view.addSubview(saveCount)
         
         self.setupAVCapture()
     }
@@ -100,6 +117,12 @@ class ViewController: UIViewController {
     
     @objc func onClickModeButton(sender: UIButton){
         mode = (mode + 1) % totalModeCnt
+        
+        if(mode == 2){
+            saveCount.isHidden = false
+        }else{
+            saveCount.isHidden = true
+        }
     }
         
     func messageBox(messageTitle: String, messageAlert: String, messageBoxStyle: UIAlertController.Style, alertActionStyle: UIAlertAction.Style, completionHandler: @escaping () -> Void)
@@ -175,6 +198,8 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
         
         guard let uiImage = imageFromSampleBuffer(sampleBuffer: sampleBuffer) else { return }
         
+        
+        
         DispatchQueue.main.sync {
             var dstImg : UIImage = uiImage
             self.originImg = uiImage
@@ -184,6 +209,15 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                 dstImg = OpenCVWrapper.makeChessboardImage(uiImage)
             case 2:
                 dstImg = OpenCVWrapper.makeMarkerImage(uiImage)
+                
+                if(self.recordSwitch.isOn){
+                    let interval = Double(CACurrentMediaTime() - self.startTime)
+                    
+                    if(interval >= 0.05){
+                        print("Image save")
+                        self.startTime = CACurrentMediaTime()
+                    }
+                }
             default:
                 self.mode = 0
             }

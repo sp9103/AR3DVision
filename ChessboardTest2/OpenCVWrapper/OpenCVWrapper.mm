@@ -54,10 +54,12 @@
     return MatToUIImage(dst);
 }
 
-+(void) initDescManager:(NSString*) path{
-    std::string cppString = [path UTF8String];
++(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath{
+    std::string cppmtxpath = [path UTF8String];
+    std::string cppdatapath = [datapath UTF8String];
     
-    ChessBoard::instance().setPath(cppString);
+    ChessBoard::instance().setPath(cppmtxpath);
+    ChessBoard::instance().setDataPath(cppdatapath);
 }
 
 @end
