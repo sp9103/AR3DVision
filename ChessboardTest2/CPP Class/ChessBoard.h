@@ -36,8 +36,11 @@ private:
     cv::Mat cameraMatrix;
     cv::Mat distCoef;
     
-    ChessBoard() {}
+    ChessBoard();
     static ChessBoard* instance_;
+    
+    cv::Ptr<cv::aruco::DetectorParameters> parameters;
+    cv::Ptr<cv::aruco::Dictionary> dictionary;
     
     cv::Mat xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z);
     cv::Mat calcAverRMat(std::map<int, cv::Vec3d>& rMap);
@@ -49,6 +52,13 @@ private:
                       const std::vector<int>& markerIds,
                       cv::Vec3d& objCenter,
                       cv::Vec3d& objRot);
+    
+    bool estimateMarker(cv::Mat& inputImage,
+                        std::vector<int>& markerIds,
+                        std::vector<std::vector<cv::Point2f>>& markerCorners,
+                        std::vector<std::vector<cv::Point2f>>& rejectedCandidates,
+                        std::vector<cv::Vec3d>& tvecs,
+                        std::vector<cv::Vec3d>& rvecs);
 };
 
 #endif /* ChessBoard_h */

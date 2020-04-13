@@ -8,6 +8,11 @@
 
 #include "ChessBoard.h"
 
+ChessBoard::ChessBoard(){
+    parameters = cv::aruco::DetectorParameters::create();
+    dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+}
+
 void ChessBoard::drawChessboard(cv::Mat& img){
     cv::Mat gray = img.clone();
     
@@ -31,32 +36,22 @@ void ChessBoard::drawChessboard(cv::Mat& img){
 void ChessBoard::drawMarker(cv::Mat& inputImage){
     std::vector<int> markerIds;
     std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
-    
-    cvtColor(inputImage, inputImage, cv::COLOR_BGRA2BGR);
-    
-    cv::Mat gray = inputImage.clone();
-    if (gray.channels() != 1){
-        cvtColor(gray, gray, cv::COLOR_BGR2GRAY);
-    }
-
-    cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
-    cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
-    cv::aruco::detectMarkers(gray, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
-    
-    if(markerIds.size() == 0)
-        return;
-    
-    cv::aruco::drawDetectedMarkers(inputImage, markerCorners, markerIds);
     std::vector<cv::Vec3d> rvecs, tvecs;
-    cv::aruco::estimatePoseSingleMarkers(markerCorners, 0.05, cameraMatrix, distCoef, rvecs, tvecs);
+    
+    if(!estimateMarker(inputImage, markerIds, markerCorners, rejectedCandidates, tvecs, rvecs))
+        return;
     
     cv::Vec3d objCenter = cv::Vec3d();
     cv::Vec3d objRot = cv::Vec3d();
     
     // draw axis for each marker
+    cv::aruco::drawDetectedMarkers(inputImage, markerCorners, markerIds);
     for(int i=0; i<markerIds.size(); i++){
         cv::aruco::drawAxis(inputImage, cameraMatrix, distCoef, rvecs[i], tvecs[i], 0.1);
     }
+    
+    if(markerIds.size() < 4)
+        return;
     
     findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
     cv::aruco::drawAxis(inputImage, cameraMatrix, distCoef, objRot, objCenter, 0.2);
@@ -190,4 +185,27 @@ void ChessBoard::findCenterRT(const std::vector<cv::Vec3d>& tvecs,
     R = xyzToRMat(x, y, z);
     
     cv::Rodrigues(R, objRot);
+}
+
+bool ChessBoard::estimateMarker(cv::Mat& inputImage,
+                    std::vector<int>& markerIds,
+                    std::vector<std::vector<cv::Point2f>>& markerCorners,
+                    std::vector<std::vector<cv::Point2f>>& rejectedCandidates,
+                    std::vector<cv::Vec3d>& tvecs,
+                    std::vector<cv::Vec3d>& rvecs){
+    cvtColor(inputImage, inputImage, cv::COLOR_BGRA2BGR);
+    
+    cv::Mat gray = inputImage.clone();
+    if (gray.channels() != 1){
+        cvtColor(gray, gray, cv::COLOR_BGR2GRAY);
+    }
+
+    cv::aruco::detectMarkers(gray, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
+    
+    if(markerIds.size() == 0)
+        return false;
+    
+    cv::aruco::estimatePoseSingleMarkers(markerCorners, 0.05, cameraMatrix, distCoef, rvecs, tvecs);
+    
+    return true;
 }
