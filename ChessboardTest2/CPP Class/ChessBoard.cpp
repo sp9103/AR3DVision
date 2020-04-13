@@ -72,18 +72,31 @@ void ChessBoard::drawMarker(cv::Mat& inputImage){
     if(idMapT.size() != 4)
         return;
     
-    cv::Vec3d t1 = idMapR.find(203)->second;
-    cv::Vec3d t2 = idMapR.find(23)->second;
-    cv::Vec3d t3 = idMapR.find(40)->second;
+    cv::Vec3d t1 = idMapT.find(23)->second;
+    cv::Vec3d t2 = idMapT.find(62)->second;
+    cv::Vec3d t3 = idMapT.find(203)->second;
     
-    cv::Mat Rt1, Rt2, Rt3;
-    cv::Rodrigues(t1, Rt1);
-    cv::Rodrigues(t2, Rt2);
-    cv::Rodrigues(t3, Rt3);
+    cv::Vec3d v1 = t3 - t1;
+    cv::Vec3d v2 = t2 - t1;
     
-    cv::Mat R = (Rt1 + Rt2 + Rt3) / 3.0;
+    cv::Vec3d x, y, z;
+    z = v2.cross(v1);
+    z = makeUnitVec(z);
+
+    cv::Mat R = calcAverRMat(idMapR);
+
+    cv::Vec3d xAver, yAver, zAver;
+    RMatToxyz(R, xAver, yAver, zAver);
+    
+    y = z.cross(xAver);
+    y = makeUnitVec(y);
+    
+    x = y.cross(z);
+    x = makeUnitVec(x);
+    
+    R = xyzToRMat(x, y, z);
+    
     cv::Rodrigues(R, objRot);
-    
     cv::aruco::drawAxis(inputImage, cameraMatrix, distCoef, objRot, objCenter, 0.2);
 }
 
@@ -108,19 +121,52 @@ void ChessBoard::setPath(string path){
 
 
 cv::Mat ChessBoard::xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z){
-    cv::Mat R = cv::Mat::zeros(3,3,CV_32FC1);
+    cv::Mat R = cv::Mat::zeros(3,3,CV_64FC1);
     
-    R.at<float>(0,0) = x[0];
-    R.at<float>(1,0) = x[1];
-    R.at<float>(2,0) = x[2];
+    R.at<double>(0,0) = x[0];
+    R.at<double>(1,0) = x[1];
+    R.at<double>(2,0) = x[2];
     
-    R.at<float>(0,1) = y[0];
-    R.at<float>(1,1) = y[1];
-    R.at<float>(2,1) = y[2];
+    R.at<double>(0,1) = y[0];
+    R.at<double>(1,1) = y[1];
+    R.at<double>(2,1) = y[2];
     
-    R.at<float>(0,2) = z[0];
-    R.at<float>(1,2) = z[1];
-    R.at<float>(2,2) = z[2];
+    R.at<double>(0,2) = z[0];
+    R.at<double>(1,2) = z[1];
+    R.at<double>(2,2) = z[2];
     
     return R.clone();
+}
+
+void ChessBoard::RMatToxyz(cv::Mat& src, cv::Vec3d& x, cv::Vec3d& y, cv::Vec3d& z){
+    x[0] = src.at<double>(0,0);
+    x[1] = src.at<double>(1,0);
+    x[2] = src.at<double>(2,0);
+    
+    y[0] = src.at<double>(0,1);
+    y[1] = src.at<double>(1,1);
+    y[2] = src.at<double>(2,1);
+    
+    z[0] = src.at<double>(0,2);
+    z[1] = src.at<double>(1,2);
+    z[2] = src.at<double>(2,2);
+}
+
+cv::Mat ChessBoard::calcAverRMat(std::map<int, cv::Vec3d>& rMap){
+    cv::Mat R = cv::Mat::zeros(3,3, CV_64FC1);
+    
+    for(auto r:rMap){
+        cv::Mat Rt;
+        
+        cv::Rodrigues(r.second, Rt);
+        R = R + Rt;
+    }
+    
+    R = R / rMap.size();
+    
+    return R.clone();
+}
+
+cv::Vec3d ChessBoard::makeUnitVec(cv::Vec3d src){
+    return src / sqrt(src[0] * src[0] + src[1] * src[1] + src[2] * src[2]);
 }

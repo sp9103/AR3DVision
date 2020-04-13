@@ -36,6 +36,9 @@ private:
     static ChessBoard* instance_;
     
     cv::Mat xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z);
+    void RMatToxyz(cv::Mat& src, cv::Vec3d& x, cv::Vec3d& y, cv::Vec3d& z);
+    cv::Mat calcAverRMat(std::map<int, cv::Vec3d>& rMap);
+    cv::Vec3d makeUnitVec(cv::Vec3d src);
 };
 
 #endif /* ChessBoard_h */
