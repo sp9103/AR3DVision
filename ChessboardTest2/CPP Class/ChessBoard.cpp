@@ -5,7 +5,7 @@
 //  Created by sungphill on 2020/04/10.
 //  Copyright © 2020 sungphill. All rights reserved.
 //
-
+#include <fstream>
 #include "ChessBoard.h"
 
 ChessBoard::ChessBoard(){
@@ -133,7 +133,25 @@ cv::Vec3d ChessBoard::makeUnitVec(cv::Vec3d src){
 }
 
 bool ChessBoard::saveData(cv::Mat& src, string key){
+    std::vector<int> markerIds;
+    std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    std::vector<cv::Vec3d> rvecs, tvecs;
+    cv::Vec3d objCenter, objRot;
+    SCENE scene;
     
+    if(!estimateMarker(src, markerIds, markerCorners, rejectedCandidates, tvecs, rvecs))
+        return false;
+    
+    if(markerIds.size() < 4)
+        return false;
+    
+    findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
+    
+    scene.filename = key;
+    scene.objCenter = objCenter;
+    scene.objRot = objRot;
+    
+    savedData.push_back(scene);
     
     return true;
 }
@@ -208,4 +226,29 @@ bool ChessBoard::estimateMarker(cv::Mat& inputImage,
     cv::aruco::estimatePoseSingleMarkers(markerCorners, 0.05, cameraMatrix, distCoef, rvecs, tvecs);
     
     return true;
+}
+
+void ChessBoard::writeData(){
+    if(datasetPath.size() < 0)
+        return;
+    
+    std::ofstream writeFile(datasetPath, ios::out);
+    
+    if(!writeFile.is_open())
+        return;
+    
+    int size = (int)savedData.size();
+    writeFile << size << endl;
+    
+    for(auto scene:savedData){
+        writeFile << scene.filename << endl;
+        writeFile << scene.objCenter << endl;
+        writeFile << scene.objRot << endl;
+    }
+    
+    writeFile.close();
+}
+
+int ChessBoard::getDataCount(){
+    return (int)savedData.size();
 }

@@ -71,4 +71,12 @@
     return ChessBoard::instance().saveData(imageMat, cppKey);
 }
 
++(void) writeData{
+    ChessBoard::instance().writeData();
+}
+
++(int) getDataCount{
+    return ChessBoard::instance().getDataCount();
+}
+
 @end

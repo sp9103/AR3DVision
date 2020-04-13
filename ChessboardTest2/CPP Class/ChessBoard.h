@@ -18,23 +18,36 @@
 using namespace std;
 using namespace cv;
 
+struct SCENE
+{
+    string filename;
+    cv::Vec3d objCenter;
+    cv::Vec3d objRot;
+};
+
 class ChessBoard
 {
 public:
+    static ChessBoard& instance();
+    
     void drawChessboard(cv::Mat& img);
     void drawMarker(cv::Mat& img);
     
-    bool saveData(cv::Mat& src, string key);
-    
-    static ChessBoard& instance();
     void setPath(string path);
     void setDataPath(string path);
+   
+    void writeData();
+    bool saveData(cv::Mat& src, string key);
+    
+    int getDataCount();
     
 private:
     string filepath;
     string datasetPath;
     cv::Mat cameraMatrix;
     cv::Mat distCoef;
+    
+    std::vector<SCENE> savedData;
     
     ChessBoard();
     static ChessBoard* instance_;

@@ -32,7 +32,6 @@ class ViewController: UIViewController {
     
     let totalModeCnt: Int = 3
     var mode: Int = 0
-    var saveCount: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -221,8 +220,7 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                         if(success){
                             save(image: uiImage, forKey: uuid)
                             
-                            self.saveCount += 1
-                            self.saveCountLabel.text = String(format:"%d", self.saveCount)
+                            self.saveCountLabel.text = String(format:"%d", OpenCVWrapper.getDataCount())
                             
                             self.startTime = CACurrentMediaTime()
                         }
