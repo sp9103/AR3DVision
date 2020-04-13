@@ -49,54 +49,16 @@ void ChessBoard::drawMarker(cv::Mat& inputImage){
     cv::aruco::drawDetectedMarkers(inputImage, markerCorners, markerIds);
     std::vector<cv::Vec3d> rvecs, tvecs;
     cv::aruco::estimatePoseSingleMarkers(markerCorners, 0.05, cameraMatrix, distCoef, rvecs, tvecs);
-    // draw axis for each marker
     
     cv::Vec3d objCenter = cv::Vec3d();
     cv::Vec3d objRot = cv::Vec3d();
-    std::map<int, cv::Vec3d> idMapT, idMapR;
     
+    // draw axis for each marker
     for(int i=0; i<markerIds.size(); i++){
-        int id = markerIds.at(i);
-        if(id == 62
-           || id == 203
-           || id == 23
-           || id == 40){
-            objCenter += tvecs[i] / 4;
-            idMapT.insert(std::make_pair(id, tvecs[i]));
-            idMapR.insert(std::make_pair(id, rvecs[i]));
-        }
-        
         cv::aruco::drawAxis(inputImage, cameraMatrix, distCoef, rvecs[i], tvecs[i], 0.1);
     }
     
-    if(idMapT.size() != 4)
-        return;
-    
-    cv::Vec3d t1 = idMapT.find(23)->second;
-    cv::Vec3d t2 = idMapT.find(62)->second;
-    cv::Vec3d t3 = idMapT.find(203)->second;
-    
-    cv::Vec3d v1 = t3 - t1;
-    cv::Vec3d v2 = t2 - t1;
-    
-    cv::Vec3d x, y, z;
-    z = v2.cross(v1);
-    z = makeUnitVec(z);
-
-    cv::Mat R = calcAverRMat(idMapR);
-
-    cv::Vec3d xAver, yAver, zAver;
-    RMatToxyz(R, xAver, yAver, zAver);
-    
-    y = z.cross(xAver);
-    y = makeUnitVec(y);
-    
-    x = y.cross(z);
-    x = makeUnitVec(x);
-    
-    R = xyzToRMat(x, y, z);
-    
-    cv::Rodrigues(R, objRot);
+    findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
     cv::aruco::drawAxis(inputImage, cameraMatrix, distCoef, objRot, objCenter, 0.2);
 }
 
@@ -173,4 +135,59 @@ cv::Mat ChessBoard::calcAverRMat(std::map<int, cv::Vec3d>& rMap){
 
 cv::Vec3d ChessBoard::makeUnitVec(cv::Vec3d src){
     return src / sqrt(src[0] * src[0] + src[1] * src[1] + src[2] * src[2]);
+}
+
+bool ChessBoard::saveData(cv::Mat& src, string key){
+    
+    
+    return true;
+}
+
+void ChessBoard::findCenterRT(const std::vector<cv::Vec3d>& tvecs,
+                  const std::vector<cv::Vec3d>& rvecs,
+                  const std::vector<int>& markerIds,
+                  cv::Vec3d& objCenter,
+                  cv::Vec3d& objRot){
+    std::map<int, cv::Vec3d> idMapT, idMapR;
+    
+    for(int i=0; i<markerIds.size(); i++){
+        int id = markerIds.at(i);
+        if(id == 62
+           || id == 203
+           || id == 23
+           || id == 40){
+            objCenter += tvecs[i] / 4;
+            idMapT.insert(std::make_pair(id, tvecs[i]));
+            idMapR.insert(std::make_pair(id, rvecs[i]));
+        }
+    }
+    
+    if(idMapT.size() != 4)
+        return;
+    
+    cv::Vec3d t1 = idMapT.find(23)->second;
+    cv::Vec3d t2 = idMapT.find(62)->second;
+    cv::Vec3d t3 = idMapT.find(203)->second;
+    
+    cv::Vec3d v1 = t3 - t1;
+    cv::Vec3d v2 = t2 - t1;
+    
+    cv::Vec3d x, y, z;
+    z = v2.cross(v1);
+    z = makeUnitVec(z);
+
+    cv::Mat R = calcAverRMat(idMapR);
+
+    cv::Vec3d xAver, yAver, zAver;
+    RMatToxyz(R, xAver, yAver, zAver);
+    
+    y = z.cross(xAver);
+    y = makeUnitVec(y);
+    
+    x = y.cross(z);
+    x = makeUnitVec(x);
+    
+    R = xyzToRMat(x, y, z);
+    
+    cv::Rodrigues(R, objRot);
 }

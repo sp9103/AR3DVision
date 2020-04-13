@@ -54,12 +54,21 @@
     return MatToUIImage(dst);
 }
 
-+(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath{
++(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath {
     std::string cppmtxpath = [path UTF8String];
     std::string cppdatapath = [datapath UTF8String];
     
     ChessBoard::instance().setPath(cppmtxpath);
     ChessBoard::instance().setDataPath(cppdatapath);
+}
+
++(bool) saveData:(UIImage *) image forKey:(NSString*) key {
+    std::string cppKey = [key UTF8String];
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    return ChessBoard::instance().saveData(imageMat, cppKey);
 }
 
 @end

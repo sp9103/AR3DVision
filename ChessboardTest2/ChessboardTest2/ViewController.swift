@@ -28,10 +28,11 @@ class ViewController: UIViewController {
     
     private let context = CIContext()
     private var startTime: CFTimeInterval!
-    private let saveCount: UILabel = UILabel()
+    private let saveCountLabel: UILabel = UILabel()
     
     let totalModeCnt: Int = 3
     var mode: Int = 0
+    var saveCount: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,13 +75,13 @@ class ViewController: UIViewController {
         
         recordSwitch.layer.position = CGPoint(x: (UIScreen.main.bounds.width - saveButton.layer.position.x)/2 - 30, y: gap + 640)
         
-        saveCount.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-        saveCount.backgroundColor = UIColor.clear
-        saveCount.textAlignment = .center
-        saveCount.text = "0"
-        saveCount.textColor = UIColor.green
-        saveCount.layer.position = CGPoint(x: self.view.frame.width/7*6, y: gap)
-        saveCount.isHidden = true
+        saveCountLabel.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+        saveCountLabel.backgroundColor = UIColor.clear
+        saveCountLabel.textAlignment = .center
+        saveCountLabel.text = "0"
+        saveCountLabel.textColor = UIColor.green
+        saveCountLabel.layer.position = CGPoint(x: self.view.frame.width/7*6, y: gap)
+        saveCountLabel.isHidden = true
         
         //Add a view on top of the cameras' view
         boxView = UIView(frame: self.view.frame)
@@ -89,7 +90,7 @@ class ViewController: UIViewController {
         view.addSubview(saveButton)
         view.addSubview(modeButton)
         view.addSubview(recordSwitch)
-        view.addSubview(saveCount)
+        view.addSubview(saveCountLabel)
         
         self.setupAVCapture()
     }
@@ -119,9 +120,9 @@ class ViewController: UIViewController {
         mode = (mode + 1) % totalModeCnt
         
         if(mode == 2){
-            saveCount.isHidden = false
+            saveCountLabel.isHidden = false
         }else{
-            saveCount.isHidden = true
+            saveCountLabel.isHidden = true
         }
     }
         
@@ -213,9 +214,18 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                 if(self.recordSwitch.isOn){
                     let interval = Double(CACurrentMediaTime() - self.startTime)
                     
-                    if(interval >= 0.05){
-                        print("Image save")
-                        self.startTime = CACurrentMediaTime()
+                    if(interval >= 0.08){
+                        let uuid = UUID().uuidString
+                        let success = OpenCVWrapper.saveData(uiImage, forKey: uuid + ".png")
+                        
+                        if(success){
+                            save(image: uiImage, forKey: uuid)
+                            
+                            self.saveCount += 1
+                            self.saveCountLabel.text = String(format:"%d", self.saveCount)
+                            
+                            self.startTime = CACurrentMediaTime()
+                        }
                     }
                 }
             default:

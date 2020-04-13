@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage *) makeChessboardImage:(UIImage *) image;
 +(UIImage *) makeMarkerImage:(UIImage *) image;
 +(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath;
++(bool) saveData:(UIImage *) image forKey:(NSString*) key;
 
 @end
 
