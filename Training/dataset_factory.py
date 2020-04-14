@@ -36,8 +36,6 @@ def ImageLoadProcess(args):
     loadimglist = []
     loadcenterlist = []
     loadrotlist = []
-    
-    print(ImgList)
 
     while True:
         while ImgQueue.qsize() > buffersize:
@@ -180,6 +178,19 @@ class ImageCollector(MemoryLoadBass):
     def getDataCnt(self):
         return self._imgcount
 
+def center_crop(img):
+    target_crop_w = 480
+    target_crop_h = 480
+
+    h, w, c = img.shape
+    c_x = w / 2
+    c_y = h / 2
+    crop_w = [int(c_x - target_crop_w / 2), int(c_x + target_crop_w / 2)]
+    crop_h = [int(c_y - target_crop_h / 2), int(c_y + target_crop_h / 2)]
+
+    img = img[crop_h[0]:crop_h[1], crop_w[0]:crop_w[1], :]
+
+    return img, seg
 
 def ImgNormalize(img, scale):
     img = img.astype('float') / (scale / 2.0)
