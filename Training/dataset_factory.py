@@ -58,6 +58,8 @@ def ImageLoadProcess(args):
 
         img = img[...,::-1]   # bgr to rgb
 
+        img = center_crop(img)
+        img = cv2.resize(img, dsize=(224, 224), interpolation=cv2.INTER_AREA)
         img = ImgNormalize(img, 255.)
 
         loadimglist.append(img)
@@ -190,7 +192,7 @@ def center_crop(img):
 
     img = img[crop_h[0]:crop_h[1], crop_w[0]:crop_w[1], :]
 
-    return img, seg
+    return img
 
 def ImgNormalize(img, scale):
     img = img.astype('float') / (scale / 2.0)
