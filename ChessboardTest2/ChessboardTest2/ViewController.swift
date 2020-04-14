@@ -36,7 +36,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path, dataPath: filePath(forKey: "dataset.txt")!.absoluteURL.path)
+        let uuid_key = UUID().uuidString + "_dataset.txt"
+        OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path, dataPath: filePath(forKey: uuid_key)!.absoluteURL.path)
         
         let gap : CGFloat = (UIScreen.main.bounds.size.height - 640) / 2
         
