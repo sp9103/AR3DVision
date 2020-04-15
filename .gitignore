@@ -2,6 +2,12 @@ ChessboardTest2/opencv2.framework/*
 ChessboardTest2/Frameworks/opencv2.framework/*
 Training/mobilenet_v2_1.0_224
 Training/ARVision Data
+Training/checkpoints/*
+
+# result
+*.pbtxt
+*.mlmodel
+*.pb
 
 # Xcode
 .DS_Store
