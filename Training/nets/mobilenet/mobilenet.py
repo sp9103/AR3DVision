@@ -385,12 +385,12 @@ def mobilenet(inputs,
           activation_fn=None,
           normalizer_fn=None,
           biases_initializer=tf.compat.v1.zeros_initializer(),
-          scope='Conv2d_1c_1x1')
+          scope='Conv2d_1c_1x1_6DOF')
 
       logits = tf.squeeze(logits, [1, 2])
 
-      logits = tf.identity(logits, name='output')
-    end_points['Logits'] = logits
+      logits = tf.identity(logits, name='6DOF')
+    end_points['6DOF'] = logits
     if prediction_fn:
       end_points['Predictions'] = prediction_fn(logits, 'Predictions')
   return logits, end_points
