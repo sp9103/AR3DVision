@@ -34,8 +34,7 @@ def ImageLoadProcess(args):
         return 0
 
     loadimglist = []
-    loadcenterlist = []
-    loadrotlist = []
+    loadlabellist = []
 
     while True:
         while ImgQueue.qsize() > buffersize:
@@ -62,19 +61,17 @@ def ImageLoadProcess(args):
         img = cv2.resize(img, dsize=(224, 224), interpolation=cv2.INTER_AREA)
         img = ImgNormalize(img, 255.)
 
+        label = np.concatenate((path['center'], path['rotation']), axis=None)
         loadimglist.append(img)
-        loadcenterlist.append(path['center'])
-        loadrotlist.append(path['rotation'])
+        loadlabellist.append(label)
 
         if len(loadimglist) >= batchsize:
             imgarray = np.array(loadimglist)
-            centerArr = np.array(loadcenterlist)
-            rotArr = np.array(loadrotlist)
+            labelarray = np.array(loadlabellist)
 
-            ImgQueue.put([id, imgarray, centerArr, rotArr])
+            ImgQueue.put([id, imgarray, labelarray])
             loadimglist = []
-            loadcenterlist = []
-            rotArr = []
+            loadlabellist = []
 
 class MemoryLoadBass:
     __metaclass__ = ABCMeta
