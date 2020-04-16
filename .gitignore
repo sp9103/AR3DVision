@@ -8,6 +8,7 @@ Training/checkpoints/*
 *.pbtxt
 *.mlmodel
 *.pb
+*.pyc
 
 # Xcode
 .DS_Store
