@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage *) makeChessboardImage:(UIImage *) image;
 +(UIImage *) makeMarkerImage:(UIImage *) image;
 
++(UIImage *) refineImage:(UIImage *) image;
+
 +(bool) saveData:(UIImage *) image forKey:(NSString*) key;
 +(void) writeData;
 +(int) getDataCount;

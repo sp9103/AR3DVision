@@ -54,6 +54,23 @@
     return MatToUIImage(dst);
 }
 
++(UIImage *) refineImage:(UIImage *) image{
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    cv::Mat dst = imageMat.clone();
+    ChessBoard::instance().prepareImgForNet(dst);
+    cv::resize( dst, dst, cv::Size(224, 224), 0, 0, INTER_AREA );
+    
+    if (imageMat.channels() > 3)
+        cv::cvtColor(dst, dst, cv::COLOR_BGRA2BGR);
+    
+    // normalize - TODO
+    
+    return MatToUIImage(dst);
+}
+
 +(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath {
     std::string cppmtxpath = [path UTF8String];
     std::string cppdatapath = [datapath UTF8String];

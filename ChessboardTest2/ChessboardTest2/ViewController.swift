@@ -34,6 +34,9 @@ class ViewController: UIViewController {
     let totalModeCnt: Int = 4      // default, chessboard, marker, MobileNet
     var mode: Int = 0
     
+    //MobileNetV2
+    let net = AR3DVision()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -252,9 +255,9 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                         }
                     }
                 }
-                case 3:
-                    //TODO - pass network and draw result
-                    dstImg = OpenCVWrapper.makeGrayImage(uiImage)
+            case 3:
+                //TODO - pass network and draw result
+                dstImg = OpenCVWrapper.refineImage(uiImage)
             default:
                 self.mode = 0
             }

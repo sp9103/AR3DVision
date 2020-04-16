@@ -252,3 +252,27 @@ void ChessBoard::writeData(){
 int ChessBoard::getDataCount(){
     return (int)savedData.size();
 }
+
+void ChessBoard::prepareImgForNet(cv::Mat& img){
+    img = center_crop(img);
+}
+
+cv::Mat ChessBoard::center_crop(cv::Mat& src){
+    int target_crop_w = 480;
+    int target_crop_h = 480;
+
+    int h = src.rows;
+    int w = src.cols;
+    
+    int c_x = w / 2;
+    int c_y = h / 2;
+    int crop_w1 = (int)(c_x - target_crop_w / 2);
+    int crop_w2 = (int)(c_x + target_crop_w / 2);
+    int crop_h1 = (int)(c_y - target_crop_h / 2);
+    int crop_h2 = (int)(c_y + target_crop_h / 2);
+    
+    Rect rect(crop_w1, crop_h1, crop_w2-crop_w1, crop_h2-crop_h1);
+    Mat subImage = src(rect);
+
+    return subImage.clone();
+}

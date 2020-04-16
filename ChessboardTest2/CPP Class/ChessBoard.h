@@ -41,6 +41,8 @@ public:
     
     int getDataCount();
     
+    void prepareImgForNet(cv::Mat& img);
+    
 private:
     string filepath;
     string datasetPath;
@@ -72,6 +74,8 @@ private:
                         std::vector<std::vector<cv::Point2f>>& rejectedCandidates,
                         std::vector<cv::Vec3d>& tvecs,
                         std::vector<cv::Vec3d>& rvecs);
+    
+    cv::Mat center_crop(cv::Mat& src);
 };
 
 #endif /* ChessBoard_h */
