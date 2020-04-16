@@ -29,8 +29,9 @@ class ViewController: UIViewController {
     private let context = CIContext()
     private var startTime: CFTimeInterval!
     private let saveCountLabel: UILabel = UILabel()
+    private let modeStatus: UILabel = UILabel()
     
-    let totalModeCnt: Int = 3
+    let totalModeCnt: Int = 4      // default, chessboard, marker, MobileNet
     var mode: Int = 0
     
     override func viewDidLoad() {
@@ -83,6 +84,15 @@ class ViewController: UIViewController {
         saveCountLabel.layer.position = CGPoint(x: self.view.frame.width/7*6, y: gap)
         saveCountLabel.isHidden = true
         
+        modeStatus.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+        modeStatus.backgroundColor = UIColor.gray
+        modeStatus.layer.masksToBounds = true
+        modeStatus.textAlignment = .center
+        modeStatus.text = "Default"
+        modeStatus.textColor = UIColor.white
+        modeStatus.layer.cornerRadius = 20.0
+        modeStatus.layer.position = CGPoint(x: self.view.frame.width/2, y: gap)
+        
         //Add a view on top of the cameras' view
         boxView = UIView(frame: self.view.frame)
         
@@ -91,6 +101,7 @@ class ViewController: UIViewController {
         view.addSubview(modeButton)
         view.addSubview(recordSwitch)
         view.addSubview(saveCountLabel)
+        view.addSubview(modeStatus)
         
         self.setupAVCapture()
     }
@@ -123,6 +134,20 @@ class ViewController: UIViewController {
             saveCountLabel.isHidden = false
         }else{
             saveCountLabel.isHidden = true
+        }
+        
+        switch mode{
+        case 0:
+            modeStatus.text = "Default"
+        case 1:
+            modeStatus.text = "Chessboard"
+        case 2:
+            modeStatus.text = "Marker"
+        case 3:
+            modeStatus.text = "MobileNet"
+        default:
+            modeStatus.text = "Default"
+            mode = 0
         }
     }
         
@@ -227,6 +252,9 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                         }
                     }
                 }
+                case 3:
+                    //TODO - pass network and draw result
+                    dstImg = OpenCVWrapper.makeGrayImage(uiImage)
             default:
                 self.mode = 0
             }
