@@ -316,7 +316,47 @@ void BlobLabeling::DrawLabel(cv::Mat &img, cv::Scalar RGB){
     }
 }
 
+bool compare(cv::Rect a, cv::Rect b){
+    if(a.area() < b.area()){
+        return true;
+    }
+    
+    return false;
+}
 
 cv::Mat BlobLabeling::getInputImage(){
     return m_Image.clone();
+}
+
+cv::Mat BlobLabeling::getMask(std::vector<cv::Point2f>& labelPts){
+    cv::Mat dst = cv::Mat::zeros(m_Image.rows,m_Image.cols, CV_8UC1);
+    std::vector<cv::Rect> targetRect;
+    
+    std::sort(m_recBlobs.begin(), m_recBlobs.end(), compare);
+    
+    for(auto& labelPt:labelPts){
+        for(auto& rect:m_recBlobs){
+            if(rect.contains(labelPt)){
+                targetRect.push_back(rect);
+                break;
+            }
+        }
+    }
+    
+    for(int i = 0; i < m_Image.rows; ++i){
+        for(int j = 0; j < m_Image.cols; ++j){
+            if(m_Image.at<unsigned char>(i,j) > 0){
+                for(auto& rect:targetRect){
+                    if(rect.contains(cv::Point(j,i)))
+                        dst.at<unsigned char>(i,j) = 255;
+                }
+            }
+        }
+    }
+    
+    int dilation_size = 1;
+    cv::Mat element = getStructuringElement( cv::MORPH_RECT, cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ), cv::Point( dilation_size, dilation_size ) );
+    cv::dilate(dst, dst, element, cv::Point(-1,-1), 2);
+    
+    return dst;
 }

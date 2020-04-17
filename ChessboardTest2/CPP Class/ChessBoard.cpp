@@ -7,6 +7,7 @@
 //
 #include <fstream>
 #include "ChessBoard.h"
+#include "BlobLabeling.h"
 
 ChessBoard::ChessBoard(){
     parameters = cv::aruco::DetectorParameters::create();
@@ -275,4 +276,42 @@ cv::Mat ChessBoard::center_crop(cv::Mat& src){
     Mat subImage = src(rect);
 
     return subImage.clone();
+}
+
+void ChessBoard::drawCoverMarker(cv::Mat& img){
+    std::vector<int> markerIds;
+    std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    std::vector<cv::Vec3d> rvecs, tvecs;
+    std::vector<cv::Point2f> markerCenter;
+    
+    BlobLabeling blob;
+    blob.SetParam(img);
+    blob.DoLabeling();
+    
+    if(!estimateMarker(img, markerIds, markerCorners, rejectedCandidates, tvecs, rvecs))
+        return;
+    
+    if(markerIds.size() < 4)
+        return;
+    
+    cv::Vec3d objCenter = cv::Vec3d();
+    cv::Vec3d objRot = cv::Vec3d();
+    
+    findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
+    
+    for(auto& markerCorner:markerCorners){
+        cv::Point2f center = cv::Point2f(0,0);
+        
+        for(auto& c:markerCorner){
+            center += c;
+        }
+        center.x /= markerCorner.size();
+        center.y /= markerCorner.size();
+        
+        markerCenter.push_back(center);
+    }
+    
+    // calculate marker mask
+    cv::Mat mask = blob.getMask(markerCenter);
+    cv::inpaint(img, mask, img, 3, INPAINT_NS);
 }

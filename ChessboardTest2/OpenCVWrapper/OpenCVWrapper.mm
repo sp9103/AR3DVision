@@ -55,6 +55,17 @@
     return MatToUIImage(dst);
 }
 
++(UIImage *) makeCoverMarkerImage:(UIImage *) image{
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    cv::Mat dst = imageMat.clone();
+    ChessBoard::instance().drawCoverMarker(dst);
+    
+    return MatToUIImage(dst);
+}
+
 +(UIImage *) makeBlobLabelImage:(UIImage *) image{
     cv::Mat imageMat;
     

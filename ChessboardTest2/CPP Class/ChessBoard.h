@@ -43,6 +43,9 @@ public:
     
     void prepareImgForNet(cv::Mat& img);
     
+    // Cover marker
+    void drawCoverMarker(cv::Mat& img);
+    
 private:
     string filepath;
     string datasetPath;

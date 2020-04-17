@@ -10,7 +10,9 @@
 #define BlobLabeling_hpp
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 typedef struct
 {
@@ -41,7 +43,9 @@ public:
 
     // 레이블 그리기
     void DrawLabel(cv::Mat &img, cv::Scalar RGB);
+    
     cv::Mat getInputImage();
+    cv::Mat getMask(std::vector<cv::Point2f>& labelPts);
 
 private:
     // 레이블링(동작)
