@@ -244,10 +244,10 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
 
                     if(interval >= 0.08){
                         let uuid = UUID().uuidString
-                        let success = OpenCVWrapper.saveData(OpenCVWrapper.makeCoverMarkerImage(uiImage), forKey: uuid + ".png")
+                        let success = OpenCVWrapper.saveData(uiImage, forKey: uuid + ".png")
 
                         if(success){
-                            save(image: uiImage, forKey: uuid)
+                            save(image: OpenCVWrapper.makeCoverMarkerImage(uiImage), forKey: uuid)
 
                             self.saveCountLabel.text = String(format:"%d", OpenCVWrapper.getDataCount())
 
