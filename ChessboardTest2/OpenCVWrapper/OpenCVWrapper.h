@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage *) makeGrayImage:(UIImage *) image;
 +(UIImage *) makeChessboardImage:(UIImage *) image;
 +(UIImage *) makeMarkerImage:(UIImage *) image;
++(UIImage *) makeBlobLabelImage:(UIImage *) image;
 
 +(UIImage *) refineImage:(UIImage *) image;
 

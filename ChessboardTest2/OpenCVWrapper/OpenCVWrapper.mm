@@ -11,6 +11,7 @@
 
 #import "OpenCVWrapper.h"
 #import "ChessBoard.h"
+#import "BlobLabeling.h"
 
 @implementation OpenCVWrapper
 
@@ -50,6 +51,20 @@
     
     cv::Mat dst = imageMat.clone();
     ChessBoard::instance().drawMarker(dst);
+    
+    return MatToUIImage(dst);
+}
+
++(UIImage *) makeBlobLabelImage:(UIImage *) image{
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    cv::Mat dst = imageMat.clone();
+    BlobLabeling blob;
+    blob.SetParam(imageMat);
+    blob.DoLabeling();
+    blob.DrawLabel(dst, cv::Scalar(255, 0, 0, 255));
     
     return MatToUIImage(dst);
 }

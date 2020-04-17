@@ -18,6 +18,7 @@
 		CE546C7A2441A0810068B636 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE546C792441A0810068B636 /* opencv2.framework */; };
 		CE546C7C2441A66A0068B636 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE546C7B2441A66A0068B636 /* FileManager.swift */; };
 		CEB495B224487B3D007731EE /* AR3DVision.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = CEB495B124487B3D007731EE /* AR3DVision.mlmodel */; };
+		CEB495B62449A4F8007731EE /* BlobLabeling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEB495B42449A4F8007731EE /* BlobLabeling.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,8 @@
 		CE546C792441A0810068B636 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		CE546C7B2441A66A0068B636 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		CEB495B124487B3D007731EE /* AR3DVision.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AR3DVision.mlmodel; path = ../../Training/AR3DVision.mlmodel; sourceTree = "<group>"; };
+		CEB495B42449A4F8007731EE /* BlobLabeling.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlobLabeling.cpp; sourceTree = "<group>"; };
+		CEB495B52449A4F8007731EE /* BlobLabeling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlobLabeling.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +112,8 @@
 			children = (
 				CE3D7FE1243F7452008EA735 /* ChessBoard.h */,
 				CE3D7FE2243F749A008EA735 /* ChessBoard.cpp */,
+				CEB495B52449A4F8007731EE /* BlobLabeling.h */,
+				CEB495B42449A4F8007731EE /* BlobLabeling.cpp */,
 			);
 			path = "CPP Class";
 			sourceTree = "<group>";
@@ -199,6 +204,7 @@
 				CE546C7C2441A66A0068B636 /* FileManager.swift in Sources */,
 				CE3D7FC7243F6628008EA735 /* SceneDelegate.swift in Sources */,
 				CEB495B224487B3D007731EE /* AR3DVision.mlmodel in Sources */,
+				CEB495B62449A4F8007731EE /* BlobLabeling.cpp in Sources */,
 				CE3D7FE4243F749A008EA735 /* ChessBoard.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
