@@ -241,20 +241,22 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                 
                 if(self.recordSwitch.isOn){
                     let interval = Double(CACurrentMediaTime() - self.startTime)
-                    
+
                     if(interval >= 0.08){
                         let uuid = UUID().uuidString
-                        let success = OpenCVWrapper.saveData(uiImage, forKey: uuid + ".png")
-                        
+                        let success = OpenCVWrapper.saveData(OpenCVWrapper.makeCoverMarkerImage(uiImage), forKey: uuid + ".png")
+
                         if(success){
                             save(image: uiImage, forKey: uuid)
-                            
+
                             self.saveCountLabel.text = String(format:"%d", OpenCVWrapper.getDataCount())
-                            
+
                             self.startTime = CACurrentMediaTime()
                         }
                     }
                 }
+                
+//                dstImg = OpenCVWrapper.makeBlobLabel(uiImage)
             case 3:
                 //TODO - pass network and draw result
                 dstImg = OpenCVWrapper.refineImage(uiImage)
