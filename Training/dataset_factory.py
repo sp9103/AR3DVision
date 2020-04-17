@@ -192,11 +192,13 @@ def center_crop(img):
     return img
 
 def ImgNormalize(img, scale):
-    img = img.astype('float') / (scale / 2.0)
-    img -= 1
-    return img.copy()
+    dst = img.copy()
+    dst = dst.astype('float') / (scale / 2.0)
+    dst -= 1
+    return dst
 
 def ImgInverNormalize(img, scale):
-    img += 1
-    img *= (scale / 2.0)
-    return img.copy()
+    dst = img.copy()
+    dst += 1
+    dst *= (scale / 2.0)
+    return dst
