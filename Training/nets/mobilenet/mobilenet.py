@@ -366,6 +366,7 @@ def mobilenet(inputs,
   with tf.compat.v1.variable_scope(scope, 'Mobilenet', reuse=reuse) as scope:
     inputs = tf.identity(inputs, 'input')
     net, end_points = mobilenet_base(inputs, scope=scope, **mobilenet_args)
+    end_points['input'] = inputs
     if base_only:
       return net, end_points
 

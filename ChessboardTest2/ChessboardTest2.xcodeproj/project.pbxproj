@@ -17,7 +17,7 @@
 		CE3D7FE4243F749A008EA735 /* ChessBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE3D7FE2243F749A008EA735 /* ChessBoard.cpp */; };
 		CE546C7A2441A0810068B636 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE546C792441A0810068B636 /* opencv2.framework */; };
 		CE546C7C2441A66A0068B636 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE546C7B2441A66A0068B636 /* FileManager.swift */; };
-		CEB495AA24483AB5007731EE /* AR3DVision.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = CEB495A924483AB5007731EE /* AR3DVision.mlmodel */; };
+		CEB495B224487B3D007731EE /* AR3DVision.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = CEB495B124487B3D007731EE /* AR3DVision.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,7 +36,7 @@
 		CE3D7FE2243F749A008EA735 /* ChessBoard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChessBoard.cpp; sourceTree = "<group>"; };
 		CE546C792441A0810068B636 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
 		CE546C7B2441A66A0068B636 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
-		CEB495A924483AB5007731EE /* AR3DVision.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AR3DVision.mlmodel; path = ../../Training/AR3DVision.mlmodel; sourceTree = "<group>"; };
+		CEB495B124487B3D007731EE /* AR3DVision.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = AR3DVision.mlmodel; path = ../../Training/AR3DVision.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +116,7 @@
 		CEB495A624482B9F007731EE /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CEB495A924483AB5007731EE /* AR3DVision.mlmodel */,
+				CEB495B124487B3D007731EE /* AR3DVision.mlmodel */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -198,7 +198,7 @@
 				CE3D7FDF243F6B64008EA735 /* OpenCVWrapper.mm in Sources */,
 				CE546C7C2441A66A0068B636 /* FileManager.swift in Sources */,
 				CE3D7FC7243F6628008EA735 /* SceneDelegate.swift in Sources */,
-				CEB495AA24483AB5007731EE /* AR3DVision.mlmodel in Sources */,
+				CEB495B224487B3D007731EE /* AR3DVision.mlmodel in Sources */,
 				CE3D7FE4243F749A008EA735 /* ChessBoard.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
