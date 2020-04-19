@@ -6,6 +6,9 @@
 //  Copyright © 2020 sungphill. All rights reserved.
 //
 #include <fstream>
+#include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
+
 #include "ChessBoard.h"
 #include "BlobLabeling.h"
 
@@ -56,6 +59,22 @@ void ChessBoard::drawMarker(cv::Mat& inputImage){
     
     findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
     cv::aruco::drawAxis(inputImage, cameraMatrix, distCoef, objRot, objCenter, 0.2);
+}
+
+void ChessBoard::drawCorner(cv::Mat& img){
+    Mat gray;
+    Mat desc;
+    vector<KeyPoint> kpts;
+    
+    if(img.channels() != 1)
+        cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+    
+    int minHessian = 400;
+    Ptr<cv::xfeatures2d::SURF> detector = cv::xfeatures2d::SURF::create( minHessian );
+//    Ptr<FastFeatureDetector> detector = FastFeatureDetector::create(30, true);
+    detector->detectAndCompute(gray, noArray(), kpts, desc);
+    
+    drawKeypoints(img, kpts, img);
 }
 
 ChessBoard* ChessBoard::instance_ = nullptr;

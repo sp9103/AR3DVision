@@ -80,6 +80,17 @@
     return MatToUIImage(dst);
 }
 
++(UIImage *) makeCornerImage:(UIImage *) image{
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    cv::Mat dst = imageMat.clone();
+    ChessBoard::instance().drawCorner(dst);
+    
+    return MatToUIImage(dst);
+}
+
 +(UIImage *) refineImage:(UIImage *) image{
     cv::Mat imageMat;
     

@@ -32,6 +32,7 @@ public:
     
     void drawChessboard(cv::Mat& img);
     void drawMarker(cv::Mat& img);
+    void drawCorner(cv::Mat& img);
     
     void setPath(string path);
     void setDataPath(string path);
