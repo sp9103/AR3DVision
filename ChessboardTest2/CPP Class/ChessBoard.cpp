@@ -69,7 +69,6 @@ void ChessBoard::drawCorner(cv::Mat& img){
     std::vector<int> markerIds;
     std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
     std::vector<cv::Vec3d> rvecs, tvecs;
-    std::vector<cv::Point2f> markerCenter;
     cv::Vec3d objCenter = cv::Vec3d();
     cv::Vec3d objRot = cv::Vec3d();
     
