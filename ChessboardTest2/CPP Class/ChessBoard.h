@@ -14,15 +14,28 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/aruco.hpp>
+#include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
 
 using namespace std;
 using namespace cv;
 
+class BlobLabeling;
+
 struct SCENE
 {
     string filename;
-    cv::Vec3d objCenter;
-    cv::Vec3d objRot;
+    Vec3d objCenter;
+    Vec3d objRot;
+};
+
+struct SCENE_SURF
+{
+    string descname;
+    Vec3d objCenter;
+    Vec3d objRot;
+    Mat desc;
+    vector<KeyPoint> kpts;
 };
 
 class ChessBoard
@@ -39,6 +52,7 @@ public:
    
     void writeData();
     bool saveData(cv::Mat& src, string key);
+    bool saveSURFData(cv::Mat& src, string key);
     void clearData();
     
     int getDataCount();
@@ -51,21 +65,23 @@ public:
 private:
     string filepath;
     string datasetPath;
-    cv::Mat cameraMatrix;
-    cv::Mat distCoef;
+    Mat cameraMatrix;
+    Mat distCoef;
     
-    std::vector<SCENE> savedData;
+    vector<SCENE> savedData;
+    vector<SCENE_SURF> savedSURFData;
     
     ChessBoard();
     static ChessBoard* instance_;
     
     cv::Ptr<cv::aruco::DetectorParameters> parameters;
     cv::Ptr<cv::aruco::Dictionary> dictionary;
+    cv::Ptr<cv::xfeatures2d::SURF> detector;
     
-    cv::Mat xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z);
-    cv::Mat calcAverRMat(std::map<int, cv::Vec3d>& rMap);
-    void RMatToxyz(cv::Mat& src, cv::Vec3d& x, cv::Vec3d& y, cv::Vec3d& z);
-    cv::Vec3d makeUnitVec(cv::Vec3d src);
+    Mat xyzToRMat(Vec3d x, Vec3d y, Vec3d z);
+    Mat calcAverRMat(std::map<int, Vec3d>& rMap);
+    void RMatToxyz(Mat& src, Vec3d& x, Vec3d& y, Vec3d& z);
+    Vec3d makeUnitVec(Vec3d src);
     
     void findCenterRT(const std::vector<cv::Vec3d>& tvecs,
                       const std::vector<cv::Vec3d>& rvecs,
@@ -81,6 +97,11 @@ private:
                         std::vector<cv::Vec3d>& rvecs);
     
     cv::Mat center_crop(cv::Mat& src);
+    void detectSURFObjOnly(const vector<vector<Point2f>>& markerCorners,
+                           const Mat& gray,
+                           BlobLabeling* blob,
+                           Mat& desc,
+                           vector<KeyPoint>& kpts);
 };
 
 #endif /* ChessBoard_h */

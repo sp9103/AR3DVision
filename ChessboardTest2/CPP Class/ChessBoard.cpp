@@ -6,8 +6,6 @@
 //  Copyright © 2020 sungphill. All rights reserved.
 //
 #include <fstream>
-#include <opencv2/features2d.hpp>
-#include <opencv2/xfeatures2d.hpp>
 
 #include "ChessBoard.h"
 #include "BlobLabeling.h"
@@ -15,6 +13,9 @@
 ChessBoard::ChessBoard(){
     parameters = cv::aruco::DetectorParameters::create();
     dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+    
+    int minHessian = 400;
+    detector = cv::xfeatures2d::SURF::create( minHessian );
 }
 
 void ChessBoard::drawChessboard(cv::Mat& img){
@@ -85,32 +86,15 @@ void ChessBoard::drawCorner(cv::Mat& img){
     if(markerIds.size() < 4)
         return;
     
-    cv::Point2f center = cv::Point2f(0,0);
-    for(auto& markerCorner:markerCorners){
-        cv::Point2f markCenter = cv::Point2f(0,0);
-        
-        for(auto& c:markerCorner){
-            markCenter += c;
-        }
-        markCenter.x /= markerCorner.size();
-        markCenter.y /= markerCorner.size();
-        
-        center += markCenter;
-    }
-    
-    center.x /= markerCorners.size();
-    center.y /= markerCorners.size();
-    markerCenter.push_back(center);
-    
-    // calculate marker mask
-    cv::Mat mask = blob.getMask(markerCenter);
-    
-//    cv::circle(img, center, 3, Scalar(255,0,0));
-    int minHessian = 400;
-    Ptr<cv::xfeatures2d::SURF> detector = cv::xfeatures2d::SURF::create( minHessian );
-    detector->detectAndCompute(gray, mask, kpts, desc);
+    detectSURFObjOnly(markerCorners, gray, &blob, desc, kpts);
 
     drawKeypoints(img, kpts, img);
+    
+    // draw axis for each marker
+    cv::aruco::drawDetectedMarkers(img, markerCorners, markerIds);
+    for(int i=0; i<markerIds.size(); ++i){
+        cv::aruco::drawAxis(img, cameraMatrix, distCoef, rvecs[i], tvecs[i], 0.1);
+    }
     
     findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
     cv::aruco::drawAxis(img, cameraMatrix, distCoef, objRot, objCenter, 0.2);
@@ -211,6 +195,31 @@ bool ChessBoard::saveData(cv::Mat& src, string key){
     scene.objRot = objRot;
     
     savedData.push_back(scene);
+    
+    return true;
+}
+
+bool ChessBoard::saveSURFData(cv::Mat& src, string key){
+    std::vector<int> markerIds;
+    std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    std::vector<cv::Vec3d> rvecs, tvecs;
+    cv::Vec3d objCenter, objRot;
+    SCENE_SURF scene;
+    
+    if(!estimateMarker(src, markerIds, markerCorners, rejectedCandidates, tvecs, rvecs))
+        return false;
+    
+    if(markerIds.size() < 4)
+        return false;
+    
+    findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
+    
+    scene.descname = key;
+    scene.objCenter = objCenter;
+    scene.objRot = objRot;
+//    scene.desc = ;
+    
+    savedSURFData.push_back(scene);
     
     return true;
 }
@@ -371,4 +380,34 @@ void ChessBoard::drawCoverMarker(cv::Mat& img){
     // calculate marker mask
     cv::Mat mask = blob.getMask(markerCenter);
     cv::inpaint(img, mask, img, 3, INPAINT_NS);
+}
+
+void ChessBoard::detectSURFObjOnly(const vector<vector<Point2f>>& markerCorners,
+                                   const Mat& gray,
+                                   BlobLabeling* blob,
+                                   Mat& desc,
+                                   vector<KeyPoint>& kpts){
+    cv::Point2f center = cv::Point2f(0,0);
+    std::vector<cv::Point2f> markerCenter;
+    
+    for(auto& markerCorner:markerCorners){
+        cv::Point2f markCenter = cv::Point2f(0,0);
+        
+        for(auto& c:markerCorner){
+            markCenter += c;
+        }
+        markCenter.x /= markerCorner.size();
+        markCenter.y /= markerCorner.size();
+        
+        center += markCenter;
+    }
+    
+    center.x /= markerCorners.size();
+    center.y /= markerCorners.size();
+    markerCenter.push_back(center);
+    
+    // calculate marker mask
+    cv::Mat mask = blob->getMask(markerCenter);
+    
+    detector->detectAndCompute(gray, mask, kpts, desc);
 }

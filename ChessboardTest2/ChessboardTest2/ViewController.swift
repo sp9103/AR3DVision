@@ -275,6 +275,23 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                 }
             case 4:
                 dstImg = OpenCVWrapper.makeCornerImage(uiImage)
+                
+                if(self.recordSwitch.isOn){
+                    let interval = Double(CACurrentMediaTime() - self.startTime)
+
+                    if(interval >= 0.08){
+                        let uuid = UUID().uuidString
+                        let success = OpenCVWrapper.saveData(uiImage, forKey: uuid + ".png")
+
+                        if(success){
+                            save(image: OpenCVWrapper.makeCoverMarkerImage(uiImage), forKey: uuid)
+
+                            self.saveCountLabel.text = String(format:"%d", OpenCVWrapper.getDataCount())
+
+                            self.startTime = CACurrentMediaTime()
+                        }
+                    }
+                }
             default:
                 self.mode = 0
             }

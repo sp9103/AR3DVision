@@ -125,6 +125,15 @@
     return ChessBoard::instance().saveData(imageMat, cppKey);
 }
 
++(bool) saveSURFData:(UIImage *) image forKey:(NSString*) key{
+    std::string cppKey = [key UTF8String];
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+    
+    return ChessBoard::instance().saveSURFData(imageMat, cppKey);
+}
+
 +(void) writeData{
     ChessBoard::instance().writeData();
 }
