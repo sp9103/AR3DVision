@@ -31,7 +31,7 @@ class ViewController: UIViewController {
     private let saveCountLabel: UILabel = UILabel()
     private let modeStatus: UILabel = UILabel()
     
-    let totalModeCnt: Int = 4      // default, chessboard, marker, MobileNet
+    let totalModeCnt: Int = 5      // default, chessboard, marker, MobileNet, SURF
     var mode: Int = 0
     
     //MobileNetV2
@@ -131,9 +131,11 @@ class ViewController: UIViewController {
     }
     
     @objc func onClickModeButton(sender: UIButton){
+        OpenCVWrapper.clearData()
+        
         mode = (mode + 1) % totalModeCnt
         
-        if(mode == 2){
+        if(mode == 2 || mode == 4){
             saveCountLabel.isHidden = false
         }else{
             saveCountLabel.isHidden = true
@@ -148,6 +150,8 @@ class ViewController: UIViewController {
             modeStatus.text = "Marker"
         case 3:
             modeStatus.text = "MobileNet"
+        case 4:
+            modeStatus.text = "SURF"
         default:
             modeStatus.text = "Default"
             mode = 0
@@ -238,7 +242,7 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                 dstImg = OpenCVWrapper.makeChessboardImage(uiImage)
             case 2:
                 dstImg = OpenCVWrapper.makeMarkerImage(uiImage)
-                
+
                 if(self.recordSwitch.isOn){
                     let interval = Double(CACurrentMediaTime() - self.startTime)
 
@@ -255,7 +259,6 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                         }
                     }
                 }
-                
 //                dstImg = OpenCVWrapper.makeBlobLabel(uiImage)
             case 3:
                 //TODO - pass network and draw result
@@ -270,6 +273,8 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                 
                 if let prediction = try? net.prediction(Placeholder: pixelBuffer) {   print(prediction.MobilenetV2_Logits_6DOF)
                 }
+            case 4:
+                dstImg = OpenCVWrapper.makeCornerImage(uiImage)
             default:
                 self.mode = 0
             }

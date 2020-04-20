@@ -39,6 +39,7 @@ public:
    
     void writeData();
     bool saveData(cv::Mat& src, string key);
+    void clearData();
     
     int getDataCount();
     

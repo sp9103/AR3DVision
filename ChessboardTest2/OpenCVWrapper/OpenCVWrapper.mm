@@ -133,4 +133,8 @@
     return ChessBoard::instance().getDataCount();
 }
 
++(void) clearData{
+    ChessBoard::instance().clearData();
+}
+
 @end

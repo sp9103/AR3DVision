@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage *) refineImage:(UIImage *) image;
 
 +(bool) saveData:(UIImage *) image forKey:(NSString*) key;
++(void) clearData;
 +(void) writeData;
 +(int) getDataCount;
 

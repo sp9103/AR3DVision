@@ -65,16 +65,55 @@ void ChessBoard::drawCorner(cv::Mat& img){
     Mat gray;
     Mat desc;
     vector<KeyPoint> kpts;
+    std::vector<int> markerIds;
+    std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    std::vector<cv::Vec3d> rvecs, tvecs;
+    std::vector<cv::Point2f> markerCenter;
+    cv::Vec3d objCenter = cv::Vec3d();
+    cv::Vec3d objRot = cv::Vec3d();
     
     if(img.channels() != 1)
         cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
     
+    BlobLabeling blob;
+    blob.SetParam(img);
+    blob.DoLabeling();
+    
+    if(!estimateMarker(img, markerIds, markerCorners, rejectedCandidates, tvecs, rvecs))
+        return;
+    
+    if(markerIds.size() < 4)
+        return;
+    
+    cv::Point2f center = cv::Point2f(0,0);
+    for(auto& markerCorner:markerCorners){
+        cv::Point2f markCenter = cv::Point2f(0,0);
+        
+        for(auto& c:markerCorner){
+            markCenter += c;
+        }
+        markCenter.x /= markerCorner.size();
+        markCenter.y /= markerCorner.size();
+        
+        center += markCenter;
+    }
+    
+    center.x /= markerCorners.size();
+    center.y /= markerCorners.size();
+    markerCenter.push_back(center);
+    
+    // calculate marker mask
+    cv::Mat mask = blob.getMask(markerCenter);
+    
+//    cv::circle(img, center, 3, Scalar(255,0,0));
     int minHessian = 400;
     Ptr<cv::xfeatures2d::SURF> detector = cv::xfeatures2d::SURF::create( minHessian );
-//    Ptr<FastFeatureDetector> detector = FastFeatureDetector::create(30, true);
-    detector->detectAndCompute(gray, noArray(), kpts, desc);
-    
+    detector->detectAndCompute(gray, mask, kpts, desc);
+
     drawKeypoints(img, kpts, img);
+    
+    findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
+    cv::aruco::drawAxis(img, cameraMatrix, distCoef, objRot, objCenter, 0.2);
 }
 
 ChessBoard* ChessBoard::instance_ = nullptr;
@@ -174,6 +213,10 @@ bool ChessBoard::saveData(cv::Mat& src, string key){
     savedData.push_back(scene);
     
     return true;
+}
+
+void ChessBoard::clearData(){
+    savedData.clear();
 }
 
 void ChessBoard::findCenterRT(const std::vector<cv::Vec3d>& tvecs,
@@ -312,11 +355,6 @@ void ChessBoard::drawCoverMarker(cv::Mat& img){
     
     if(markerIds.size() < 4)
         return;
-    
-    cv::Vec3d objCenter = cv::Vec3d();
-    cv::Vec3d objRot = cv::Vec3d();
-    
-    findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
     
     for(auto& markerCorner:markerCorners){
         cv::Point2f center = cv::Point2f(0,0);
