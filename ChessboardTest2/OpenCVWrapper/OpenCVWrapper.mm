@@ -142,6 +142,10 @@
     return ChessBoard::instance().getDataCount();
 }
 
++(int) getSURFDataCount{
+    return ChessBoard::instance().getSURFDataCount();
+}
+
 +(void) clearData{
     ChessBoard::instance().clearData();
 }

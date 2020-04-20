@@ -199,11 +199,22 @@ bool ChessBoard::saveData(cv::Mat& src, string key){
 }
 
 bool ChessBoard::saveSURFData(cv::Mat& src, string key){
+    Mat gray;
+    Mat desc;
+    vector<KeyPoint> kpts;
     std::vector<int> markerIds;
     std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
     std::vector<cv::Vec3d> rvecs, tvecs;
-    cv::Vec3d objCenter, objRot;
+    cv::Vec3d objCenter = cv::Vec3d();
+    cv::Vec3d objRot = cv::Vec3d();
     SCENE_SURF scene;
+    
+    if(src.channels() != 1)
+        cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+    
+    BlobLabeling blob;
+    blob.SetParam(src);
+    blob.DoLabeling();
     
     if(!estimateMarker(src, markerIds, markerCorners, rejectedCandidates, tvecs, rvecs))
         return false;
@@ -213,10 +224,13 @@ bool ChessBoard::saveSURFData(cv::Mat& src, string key){
     
     findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
     
+    detectSURFObjOnly(markerCorners, gray, &blob, desc, kpts);
+    
     scene.descname = key;
     scene.objCenter = objCenter;
     scene.objRot = objRot;
-//    scene.desc = ;
+    scene.kpts = kpts;
+    scene.desc = desc.clone();
     
     savedSURFData.push_back(scene);
     
@@ -322,6 +336,10 @@ void ChessBoard::writeData(){
 
 int ChessBoard::getDataCount(){
     return (int)savedData.size();
+}
+
+int ChessBoard::getSURFDataCount(){
+    return (int)savedSURFData.size();
 }
 
 void ChessBoard::prepareImgForNet(cv::Mat& img){

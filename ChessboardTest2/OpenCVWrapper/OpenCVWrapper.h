@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(void) clearData;
 +(void) writeData;
 +(int) getDataCount;
++(int) getSURFDataCount;
 
 @end
 

@@ -56,6 +56,7 @@ public:
     void clearData();
     
     int getDataCount();
+    int getSURFDataCount();
     
     void prepareImgForNet(cv::Mat& img);
     
