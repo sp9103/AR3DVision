@@ -4,7 +4,7 @@
 //
 //  Created by sungphill on 2020/04/09.
 //  Copyright © 2020 sungphill. All rights reserved.
-//
+// C++ Wrapper
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OpenCVWrapper : NSObject
 
+// path setting to chessboard singlton
 +(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath descPath:(NSString*) descpath;
 
 +(UIImage *) makeGrayImage:(UIImage *) image;

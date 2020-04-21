@@ -43,15 +43,21 @@ class ChessBoard
 public:
     static ChessBoard& instance();
     
+    // Calibration chessboard detect
     void drawChessboard(cv::Mat& img);
+    // aruco marker detect
     void drawMarker(cv::Mat& img);
+    // Extract SURF
     void drawCorner(cv::Mat& img);
+    // For Deploy training result
     void drawAxis(cv::Mat& img, cv::Vec3d objCenter, cv::Vec3d objRot);
     
+    // set path for data read / write
     void setPath(string path);
     void setDataPath(string path);
     void setDescPath(string path);
    
+    // data store / write method
     void writeData();
     bool saveData(cv::Mat& src, string key);
     bool saveSURFData(cv::Mat& src, string key);
@@ -62,10 +68,11 @@ public:
     
     void prepareImgForNet(cv::Mat& img);
     
-    // Cover marker
-    void drawCoverMarker(cv::Mat& img);
-    void drawMask(cv::Mat& img);
+    // Image preprocessing method
+    void drawCoverMarker(cv::Mat& img);         // remove aruco marker in image
+    void drawMask(cv::Mat& img);                // Generate binary object mask for extract surf on object
     
+    // Find position for SURF Net input
     void matchingBaseDesc(Mat& src, vector<Point2f>& dst);
     
 private:
@@ -91,12 +98,14 @@ private:
     void RMatToxyz(Mat& src, Vec3d& x, Vec3d& y, Vec3d& z);
     Vec3d makeUnitVec(Vec3d src);
     
+    // Calculate object center position & orientation for record training data
     void findCenterRT(const std::vector<cv::Vec3d>& tvecs,
                       const std::vector<cv::Vec3d>& rvecs,
                       const std::vector<int>& markerIds,
                       cv::Vec3d& objCenter,
                       cv::Vec3d& objRot);
     
+    // aruco marker detecting
     bool estimateMarker(cv::Mat& inputImage,
                         std::vector<int>& markerIds,
                         std::vector<std::vector<cv::Point2f>>& markerCorners,
@@ -105,6 +114,8 @@ private:
                         std::vector<cv::Vec3d>& rvecs);
     
     cv::Mat center_crop(cv::Mat& src);
+    
+    // detect surf on object
     void detectSURFObjOnly(const vector<vector<Point2f>>& markerCorners,
                            const Mat& gray,
                            BlobLabeling* blob,
