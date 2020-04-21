@@ -429,7 +429,30 @@ void ChessBoard::drawCoverMarker(cv::Mat& img){
 }
 
 void ChessBoard::drawMask(cv::Mat& img){
+    Mat gray;
+    Mat desc;
+    vector<KeyPoint> kpts;
+    std::vector<int> markerIds;
+    std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
+    std::vector<cv::Vec3d> rvecs, tvecs;
+    cv::Mat mask;
     
+    if(img.channels() != 1)
+        cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+    
+    BlobLabeling blob;
+    blob.SetParam(img);
+    blob.DoLabeling();
+    
+    if(!estimateMarker(img, markerIds, markerCorners, rejectedCandidates, tvecs, rvecs))
+        return;
+    
+    if(markerIds.size() < 4)
+        return;
+    
+    detectSURFObjOnly(markerCorners, gray, &blob, desc, kpts, &mask);
+    
+    img = mask.clone();
 }
 
 void ChessBoard::detectSURFObjOnly(const vector<vector<Point2f>>& markerCorners,

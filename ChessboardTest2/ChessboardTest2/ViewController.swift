@@ -127,6 +127,7 @@ class ViewController: UIViewController {
         save(image: OpenCVWrapper.makeBlobLabel(originImg), forKey: uuid + "blob")
         save(image: OpenCVWrapper.makeCoverMarkerImage(originImg), forKey: uuid + "Cover")
         save(image: OpenCVWrapper.makeCornerImage(originImg), forKey: uuid + "Corner")
+        save(image: OpenCVWrapper.maskSURFmaskImage(originImg), forKey: uuid + "mask")
         
         messageBox(messageTitle: "Success", messageAlert: "Save new image successfully", messageBoxStyle: .alert, alertActionStyle: .cancel) {
             self.dismiss(animated: true, completion: nil)

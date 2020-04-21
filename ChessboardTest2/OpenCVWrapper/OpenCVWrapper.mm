@@ -95,6 +95,11 @@
     cv::Mat imageMat;
     
     UIImageToMat(image, imageMat);
+    
+    cv::Mat dst = imageMat.clone();
+    ChessBoard::instance().drawMask(dst);
+    
+    return MatToUIImage(dst);
 }
 
 +(UIImage *) refineImage:(UIImage *) image{
