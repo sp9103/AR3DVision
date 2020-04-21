@@ -312,7 +312,7 @@ int BlobLabeling::__Area(unsigned char *DataBuf, int StartX, int StartY, int End
 
 void BlobLabeling::DrawLabel(cv::Mat &img, cv::Scalar RGB){
     for(auto& rect:m_recBlobs){
-        cv::rectangle(img, cv::Point(rect.x, rect.y), cv::Point(rect.x + rect.width, rect.y + rect.height), RGB);
+        cv::rectangle(img, cv::Point(rect.x, rect.y), cv::Point(rect.x + rect.width, rect.y + rect.height), RGB, 3);
     }
 }
 

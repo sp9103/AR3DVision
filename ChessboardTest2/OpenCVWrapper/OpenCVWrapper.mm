@@ -91,6 +91,12 @@
     return MatToUIImage(dst);
 }
 
++(UIImage *) maskSURFmaskImage:(UIImage *) image{
+    cv::Mat imageMat;
+    
+    UIImageToMat(image, imageMat);
+}
+
 +(UIImage *) refineImage:(UIImage *) image{
     cv::Mat imageMat;
     

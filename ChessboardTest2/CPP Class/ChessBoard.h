@@ -62,10 +62,12 @@ public:
     
     // Cover marker
     void drawCoverMarker(cv::Mat& img);
+    void drawMask(cv::Mat& img);
     
 private:
     string filepath;
     string datasetPath;
+    string descDatasetPath;
     Mat cameraMatrix;
     Mat distCoef;
     
@@ -102,7 +104,8 @@ private:
                            const Mat& gray,
                            BlobLabeling* blob,
                            Mat& desc,
-                           vector<KeyPoint>& kpts);
+                           vector<KeyPoint>& kpts,
+                           Mat* pMask = nullptr);
 };
 
 #endif /* ChessBoard_h */

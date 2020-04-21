@@ -9,7 +9,7 @@ import queue
 from datetime import datetime
 import json
 
-# def ImageLoadProcess(id, procCount, imgCnt, q, buffersize, ImgList, batchsize):
+# def ImageLoadProcess(id, procCount, imgCnt, q, buffersize, ImgList, batchsize, bSuffle):
 def ImageLoadProcess(args):
     id = args[0]
     procCount = args[1]
@@ -18,6 +18,7 @@ def ImageLoadProcess(args):
     buffersize = args[4]
     ImgList = args[5]
     batchsize = args[6]
+    bSuffle = args[7]
 
     cur_count = 0
     imgcount = imgCnt
@@ -47,7 +48,7 @@ def ImageLoadProcess(args):
             idx -= imgcount
             cur_count = 0
 
-        if idx == 0:
+        if idx == 0 and bSuffle is True:
             random.shuffle(ImgList)
 
         path = ImgList[idx]
@@ -122,11 +123,12 @@ class MemoryLoadBass:
             self._DataQueue.get()
 
 class ImageCollector(MemoryLoadBass):
-    def __init__(self, rootpath, numProcess, buffersize, batchsize):
+    def __init__(self, rootpath, numProcess, buffersize, batchsize, bSuffle):
         super().__init__(batchsize, numProcess)
 
         self._rootpath = rootpath
         self._buffersize = buffersize
+        self._bSuffle = bSuffle
 
         ImgList, self._imgcount = self._ReadAllImgPath()
         self._ImgList = ImgList
@@ -168,11 +170,13 @@ class ImageCollector(MemoryLoadBass):
         return img_list, len(img_list)
 
     def StartLoadData(self):
-        random.shuffle(self._ImgList)
+        if self._bSuffle:
+            random.shuffle(self._ImgList)
         self.RunProcess(ImageLoadProcess, proc_args=(self._numProcess,
                                                      self._imgcount, self._DataQueue,
                                                      self._buffersize, self._ImgList,
-                                                     self._batchsize))
+                                                     self._batchsize,
+                                                     self._bSuffle))
 
     def getDataCnt(self):
         return self._imgcount

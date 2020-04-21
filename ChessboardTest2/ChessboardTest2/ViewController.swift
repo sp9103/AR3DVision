@@ -40,7 +40,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let uuid_key = UUID().uuidString + "_dataset.txt"
+        let uuid_key = UUID().uuidString + "_dataset"
         OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path, dataPath: filePath(forKey: uuid_key)!.absoluteURL.path)
         
         let gap : CGFloat = (UIScreen.main.bounds.size.height - 640) / 2
@@ -123,7 +123,10 @@ class ViewController: UIViewController {
     @objc func onClickSaveButton(sender: UIButton){
         let uuid = UUID().uuidString
         
-        save(image: originImg, forKey: uuid)
+        save(image: OpenCVWrapper.makeMarkerImage(originImg), forKey: uuid + "origin")
+        save(image: OpenCVWrapper.makeBlobLabel(originImg), forKey: uuid + "blob")
+        save(image: OpenCVWrapper.makeCoverMarkerImage(originImg), forKey: uuid + "Cover")
+        save(image: OpenCVWrapper.makeCornerImage(originImg), forKey: uuid + "Corner")
         
         messageBox(messageTitle: "Success", messageAlert: "Save new image successfully", messageBoxStyle: .alert, alertActionStyle: .cancel) {
             self.dismiss(animated: true, completion: nil)

@@ -119,9 +119,9 @@ void ChessBoard::setPath(string path){
 }
 
 void ChessBoard::setDataPath(string path){
-    datasetPath = path;
+    datasetPath = path + ".txt";
+    descDatasetPath = path + ".xml";
 }
-
 
 cv::Mat ChessBoard::xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z){
     cv::Mat R = cv::Mat::zeros(3,3,CV_64FC1);
@@ -226,7 +226,7 @@ bool ChessBoard::saveSURFData(cv::Mat& src, string key){
     
     detectSURFObjOnly(markerCorners, gray, &blob, desc, kpts);
     
-    scene.descname = key;
+    scene.descname = "_" + key;
     scene.objCenter = objCenter;
     scene.objRot = objRot;
     scene.kpts = kpts;
@@ -239,6 +239,7 @@ bool ChessBoard::saveSURFData(cv::Mat& src, string key){
 
 void ChessBoard::clearData(){
     savedData.clear();
+    savedSURFData.clear();
 }
 
 void ChessBoard::findCenterRT(const std::vector<cv::Vec3d>& tvecs,
@@ -317,21 +318,49 @@ void ChessBoard::writeData(){
     if(datasetPath.size() < 0)
         return;
     
-    std::ofstream writeFile(datasetPath, ios::out);
-    
-    if(!writeFile.is_open())
-        return;
-    
-    int size = (int)savedData.size();
-    writeFile << size << endl;
-    
-    for(auto scene:savedData){
-        writeFile << scene.filename << endl;
-        writeFile << scene.objCenter << endl;
-        writeFile << scene.objRot << endl;
+    if(savedData.size() > 0){
+        std::ofstream writeFile(datasetPath, ios::out);
+        
+        if(!writeFile.is_open())
+            return;
+        
+        int size = (int)savedData.size();
+        writeFile << size << endl;
+        
+        for(auto scene:savedData){
+            writeFile << scene.filename << endl;
+            writeFile << scene.objCenter << endl;
+            writeFile << scene.objRot << endl;
+        }
+        
+        writeFile.close();
+    }else if(savedSURFData.size() > 0){
+        std::ofstream writeFile(datasetPath, ios::out);
+        cv::FileStorage file(descDatasetPath, cv::FileStorage::WRITE);
+        
+        if(!writeFile.is_open())
+            return;
+        
+        int size = (int)savedSURFData.size();
+        writeFile << size << endl;
+        writeFile << descDatasetPath << endl;
+        
+        for(auto scene:savedSURFData){
+            writeFile << scene.descname << endl;
+            writeFile << scene.objCenter << endl;
+            writeFile << scene.objRot << endl;
+            writeFile << (int)scene.kpts.size() << endl;
+            
+            for(auto kpt:scene.kpts){
+                writeFile << kpt.pt << endl;
+            }
+            
+            file << scene.descname << scene.desc;
+        }
+        
+        file.release();
+        writeFile.close();
     }
-    
-    writeFile.close();
 }
 
 int ChessBoard::getDataCount(){
@@ -399,11 +428,16 @@ void ChessBoard::drawCoverMarker(cv::Mat& img){
     cv::inpaint(img, mask, img, 3, INPAINT_NS);
 }
 
+void ChessBoard::drawMask(cv::Mat& img){
+    
+}
+
 void ChessBoard::detectSURFObjOnly(const vector<vector<Point2f>>& markerCorners,
                                    const Mat& gray,
                                    BlobLabeling* blob,
                                    Mat& desc,
-                                   vector<KeyPoint>& kpts){
+                                   vector<KeyPoint>& kpts,
+                                   Mat* pMask /*= nullptr*/){
     cv::Point2f center = cv::Point2f(0,0);
     std::vector<cv::Point2f> markerCenter;
     
@@ -425,6 +459,8 @@ void ChessBoard::detectSURFObjOnly(const vector<vector<Point2f>>& markerCorners,
     
     // calculate marker mask
     cv::Mat mask = blob->getMask(markerCenter);
+    if(pMask)
+        *pMask = mask.clone();
     
     detector->detectAndCompute(gray, mask, kpts, desc);
 }

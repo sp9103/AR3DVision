@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage *) makeCoverMarkerImage:(UIImage *) image;
 +(UIImage *) makeBlobLabelImage:(UIImage *) image;
 +(UIImage *) makeCornerImage:(UIImage *) image;
++(UIImage *) maskSURFmaskImage:(UIImage *) image;
 
 +(UIImage *) refineImage:(UIImage *) image;
 
