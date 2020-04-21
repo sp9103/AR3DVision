@@ -46,9 +46,11 @@ public:
     void drawChessboard(cv::Mat& img);
     void drawMarker(cv::Mat& img);
     void drawCorner(cv::Mat& img);
+    void drawAxis(cv::Mat& img, cv::Vec3d objCenter, cv::Vec3d objRot);
     
     void setPath(string path);
     void setDataPath(string path);
+    void setDescPath(string path);
    
     void writeData();
     bool saveData(cv::Mat& src, string key);
@@ -64,12 +66,15 @@ public:
     void drawCoverMarker(cv::Mat& img);
     void drawMask(cv::Mat& img);
     
+    void matchingBaseDesc(Mat& src, vector<Point2f>& dst);
+    
 private:
     string filepath;
     string datasetPath;
     string descDatasetPath;
     Mat cameraMatrix;
     Mat distCoef;
+    Mat basedesc;
     
     vector<SCENE> savedData;
     vector<SCENE_SURF> savedSURFData;

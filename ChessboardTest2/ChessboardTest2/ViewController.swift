@@ -31,17 +31,18 @@ class ViewController: UIViewController {
     private let saveCountLabel: UILabel = UILabel()
     private let modeStatus: UILabel = UILabel()
     
-    let totalModeCnt: Int = 5      // default, chessboard, marker, MobileNet, SURF
+    let totalModeCnt: Int = 5      // default, chessboard, marker, SURFNet, SURF
     var mode: Int = 0
     
     //MobileNetV2
     let net = AR3DVision()
+    let net_SURF = AR3DVision_SURF()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let uuid_key = UUID().uuidString + "_dataset"
-        OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path, dataPath: filePath(forKey: uuid_key)!.absoluteURL.path)
+        OpenCVWrapper.initDescManager(filePath(forKey: "mtx.xml")!.absoluteURL.path, dataPath: filePath(forKey: uuid_key)!.absoluteURL.path, descPath: filePath(forKey: "base_desc.xml")!.absoluteURL.path)
         
         let gap : CGFloat = (UIScreen.main.bounds.size.height - 640) / 2
         
@@ -153,7 +154,7 @@ class ViewController: UIViewController {
         case 2:
             modeStatus.text = "Marker"
         case 3:
-            modeStatus.text = "MobileNet"
+            modeStatus.text = "SURF Net"
         case 4:
             modeStatus.text = "SURF"
         default:
@@ -265,18 +266,14 @@ extension ViewController:  AVCaptureVideoDataOutputSampleBufferDelegate{
                 }
 //                dstImg = OpenCVWrapper.makeBlobLabel(uiImage)
             case 3:
-                //TODO - pass network and draw result
-                dstImg = OpenCVWrapper.refineImage(uiImage)
+                let pts = OpenCVWrapper.getSURFPos(uiImage)
                 
-                guard let pixelBuffer = dstImg.pixelBuffer() else {
-                    fatalError()
+                if let prediction = try? net_SURF.prediction(Placeholder: pts) {
+                    let result = prediction.fully_connected_4_BiasAdd
+                    
+                    OpenCVWrapper.drawAxis(dstImg, result: result)
                 }
-                
-                guard let data = dstImg.pngData() else { return }
-                print(data)
-                
-                if let prediction = try? net.prediction(Placeholder: pixelBuffer) {   print(prediction.MobilenetV2_Logits_6DOF)
-                }
+
             case 4:
                 dstImg = OpenCVWrapper.makeCornerImage(uiImage)
                 

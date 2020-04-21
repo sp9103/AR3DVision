@@ -59,7 +59,12 @@ void ChessBoard::drawMarker(cv::Mat& inputImage){
         return;
     
     findCenterRT(tvecs, rvecs, markerIds, objCenter, objRot);
+    
     cv::aruco::drawAxis(inputImage, cameraMatrix, distCoef, objRot, objCenter, 0.2);
+}
+
+void ChessBoard::drawAxis(cv::Mat& img, cv::Vec3d objCenter, cv::Vec3d objRot){
+    cv::aruco::drawAxis(img, cameraMatrix, distCoef, objRot, objCenter, 0.2);
 }
 
 void ChessBoard::drawCorner(cv::Mat& img){
@@ -121,6 +126,12 @@ void ChessBoard::setPath(string path){
 void ChessBoard::setDataPath(string path){
     datasetPath = path + ".txt";
     descDatasetPath = path + ".xml";
+}
+
+void ChessBoard::setDescPath(string path){
+    cv::FileStorage fsFrontRead(path, cv::FileStorage::READ);
+    fsFrontRead["base_desc"] >> basedesc;
+    fsFrontRead.release();
 }
 
 cv::Mat ChessBoard::xyzToRMat(cv::Vec3d x, cv::Vec3d y, cv::Vec3d z){
@@ -486,4 +497,25 @@ void ChessBoard::detectSURFObjOnly(const vector<vector<Point2f>>& markerCorners,
         *pMask = mask.clone();
     
     detector->detectAndCompute(gray, mask, kpts, desc);
+}
+
+void ChessBoard::matchingBaseDesc(Mat& src, vector<Point2f>& dst){
+    Mat gray;
+    Mat desc;
+    vector<KeyPoint> kpts;
+    cv::BFMatcher matcher(cv::NORM_L2, false);
+    
+    if(src.channels() != 1)
+        cv::cvtColor(src, gray, cv::COLOR_BGR2GRAY);
+    
+    detector->detectAndCompute(gray, noArray(), kpts, desc);
+    
+    vector<DMatch> matches;
+    matcher.match(basedesc, desc, matches);
+    
+    for(auto& match:matches){
+        Point2f pt = kpts.at(match.trainIdx).pt;
+        
+        dst.push_back(pt);
+    }
 }

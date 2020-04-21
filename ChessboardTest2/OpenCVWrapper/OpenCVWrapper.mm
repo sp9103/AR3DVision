@@ -119,12 +119,14 @@
     return MatToUIImage(dst);
 }
 
-+(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath {
++(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath  descPath:(NSString*) descpath{
     std::string cppmtxpath = [path UTF8String];
     std::string cppdatapath = [datapath UTF8String];
+    std::string cppdescpath = [descpath UTF8String];
     
     ChessBoard::instance().setPath(cppmtxpath);
     ChessBoard::instance().setDataPath(cppdatapath);
+    ChessBoard::instance().setDescPath(cppdescpath);
 }
 
 +(bool) saveData:(UIImage *) image forKey:(NSString*) key {
@@ -159,6 +161,46 @@
 
 +(void) clearData{
     ChessBoard::instance().clearData();
+}
+
++(MLMultiArray*) getSURFPos:(UIImage *) image{
+    cv::Mat imageMat;
+    std::vector<cv::Point2f> pts;
+    NSError *error;
+    MLMultiArray *inputArray = [[MLMultiArray alloc] initWithShape:@[@(1), @(14)] dataType:MLMultiArrayDataTypeFloat32
+       error:&error];
+    
+    UIImageToMat(image, imageMat);
+    
+    ChessBoard::instance().matchingBaseDesc(imageMat, pts);
+    
+    for(int i = 0; i < pts.size(); ++i){
+        cv::Point2f pt = pts.at(i);
+        inputArray[i * 2 + 0] = @(pt.x);
+        inputArray[i * 2 + 1] = @(pt.y);
+    }
+    
+    return inputArray;
+}
+
++(UIImage *) drawAxis:(UIImage *) image result:(MLMultiArray*) arr{
+    cv::Mat imageMat;
+    cv::Vec3d t, r;
+    
+    UIImageToMat(image, imageMat);
+    
+    cv::Mat dst = imageMat.clone();
+    t[0] = [arr[0] doubleValue];
+    t[1] = [arr[1] doubleValue];
+    t[2] = [arr[2] doubleValue];
+    
+    r[0] = [arr[3] doubleValue];
+    r[1] = [arr[4] doubleValue];
+    r[2] = [arr[5] doubleValue];
+    
+    ChessBoard::instance().drawAxis(dst, t, r);
+    
+    return MatToUIImage(dst);
 }
 
 @end

@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <CoreML/CoreML.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface OpenCVWrapper : NSObject
 
-+(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath;
++(void) initDescManager:(NSString*) path dataPath:(NSString*) datapath descPath:(NSString*) descpath;
 
 +(UIImage *) makeGrayImage:(UIImage *) image;
 +(UIImage *) makeChessboardImage:(UIImage *) image;
@@ -22,8 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage *) makeBlobLabelImage:(UIImage *) image;
 +(UIImage *) makeCornerImage:(UIImage *) image;
 +(UIImage *) maskSURFmaskImage:(UIImage *) image;
++(UIImage *) drawAxis:(UIImage *) image result:(MLMultiArray*) arr;
 
 +(UIImage *) refineImage:(UIImage *) image;
+
++(MLMultiArray*) getSURFPos:(UIImage *) image;
 
 +(bool) saveData:(UIImage *) image forKey:(NSString*) key;
 +(bool) saveSURFData:(UIImage *) image forKey:(NSString*) key;
